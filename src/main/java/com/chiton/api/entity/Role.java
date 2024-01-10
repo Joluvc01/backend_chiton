@@ -13,11 +13,11 @@ import lombok.*;
 
 @Entity
 @Table(name = "role")
-public class role {
+public class Role {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @NotNull
     @Size(min = 1, max = 20)

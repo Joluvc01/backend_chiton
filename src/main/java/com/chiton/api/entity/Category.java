@@ -12,22 +12,15 @@ import lombok.*;
 @Setter
 
 @Entity
-@Table(name = "user")
-public class user {
+@Table(name = "category")
+public class Category {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @NotNull
     @Size(min = 1, max = 20)
     @Column(unique = true)
-    private String username;
-
-    @NotNull
-    @Size(min = 1, max = 20)
-    private String password;
-
-    @NotNull
-    private String role_id;
+    private String name;
 }
