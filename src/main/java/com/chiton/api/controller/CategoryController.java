@@ -34,6 +34,14 @@ public class CategoryController {
 
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody CategoryDTO categoryDTO) {
+        // Verificar si la categoría ya existe
+        Category existingCategory = categoryService.findByName(categoryDTO.getName());
+
+        if (existingCategory != null) {
+            // Si la categoría ya existe, devolver un mensaje indicando el conflicto
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("La categoría ya existe");
+        }
+
         // Convierte el CategoryDTO a Category
         Category category = new Category();
         category.setName(categoryDTO.getName());
@@ -44,7 +52,6 @@ public class CategoryController {
         // Devuelve la respuesta con la categoría creada
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
     }
-
 
 
     @PutMapping("/update/{categoryId}")

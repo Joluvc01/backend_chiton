@@ -10,6 +10,8 @@ public interface CategoryService {
 
     public List<Category> findAll();
 
+    public Category findByName(String name);
+
     public Optional<Category> findById(Long id);
 
     public Category save(Category category);

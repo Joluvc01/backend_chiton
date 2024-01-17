@@ -25,9 +25,9 @@ public class Production_order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @Size(min = 1, max = 30)
-    private String customer;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "customer_id", nullable = false)
+    private Customer customer;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "generation_date", nullable = false, updatable = false)
@@ -40,6 +40,6 @@ public class Production_order {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date deadline;
 
-    @OneToMany(mappedBy = "production_order")
+    @OneToMany(mappedBy = "production_order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Production_detail> details = new HashSet<>();
 }

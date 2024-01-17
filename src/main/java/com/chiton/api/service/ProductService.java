@@ -12,6 +12,8 @@ public interface ProductService {
 
     public Optional<Product> findById(Long id);
 
+    Product findByNameAndColor(String name, String color);
+
     public Page<Product> findByCategoryName(String categoryName, Pageable pageable);
 
     public Product save(Product product);

@@ -21,6 +21,10 @@ public class Reference {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToOne
+    @JoinColumn(name = "cusomer_id")
+    private Customer customer;
+
     @NotNull
     @Size(min = 1, max = 20)
     private String descripcion;

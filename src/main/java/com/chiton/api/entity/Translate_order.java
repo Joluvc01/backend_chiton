@@ -25,9 +25,9 @@ public class Translate_order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @Size(min = 1, max = 30)
-    private String customer;
+    @OneToOne
+    @JoinColumn(name = "production_id")
+    private Production_order production_order;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "generation_date", nullable = false, updatable = false)

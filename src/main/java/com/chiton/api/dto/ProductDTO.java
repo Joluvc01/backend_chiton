@@ -13,7 +13,6 @@ public class ProductDTO implements Serializable {
 
     final Long id;
     final String name;
-    final String provider;
     final String color;
     final Double stock;
     final String category; //Cambio para recibir el nombre de la categoria

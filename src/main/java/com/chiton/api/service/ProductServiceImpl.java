@@ -15,10 +15,14 @@ public class ProductServiceImpl implements ProductService{
     @Autowired
     private ProductRepository productRepository;
 
-
     @Override
     public Page<Product> findAll(Pageable pageable) {
         return productRepository.findAll(pageable);
+    }
+
+    @Override
+    public Product findByNameAndColor(String name, String color) {
+        return productRepository.findByNameAndColor(name, color);
     }
 
     @Override
