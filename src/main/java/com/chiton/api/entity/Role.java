@@ -23,4 +23,7 @@ public class Role {
     @Size(min = 1, max = 20)
     @Column(unique = true)
     private String name;
+
+    @NotNull
+    private Boolean status;
 }

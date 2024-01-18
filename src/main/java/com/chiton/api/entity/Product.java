@@ -35,4 +35,7 @@ public class Product {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @NotNull
+    private Boolean status;
 }

@@ -35,6 +35,4 @@ public class Reference {
     @OneToMany(mappedBy = "reference", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Reference_detail> detail = new HashSet<>();
 
-
-
 }

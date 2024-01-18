@@ -44,4 +44,7 @@ public class Customer {
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Production_order> productionOrder = new HashSet<>();
+
+    @NotNull
+    private Boolean status;
 }

@@ -41,7 +41,8 @@ public class ProductController {
                     product.getName(),
                     product.getColor(),
                     product.getStock(),
-                    category
+                    category,
+                    product.getStatus()
             );
         });
 
@@ -75,6 +76,7 @@ public class ProductController {
             newProduct.setName(productDTO.getName());
             newProduct.setColor(productDTO.getColor());
             newProduct.setStock(productDTO.getStock());
+            newProduct.setStatus(productDTO.getStatus());
 
             // Buscar la categoría por nombre en la base de datos
             Category category = categoryService.findByName(productDTO.getCategory());
@@ -127,7 +129,6 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Producto no encontrado con ID: " + productId);
         }
     }
-
 
     @DeleteMapping("/delete/{productId}")
     public ResponseEntity<?> deleteProducto(@PathVariable Long productId) {

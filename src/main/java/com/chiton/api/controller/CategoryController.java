@@ -45,6 +45,7 @@ public class CategoryController {
         // Convierte el CategoryDTO a Category
         Category category = new Category();
         category.setName(categoryDTO.getName());
+        category.setStatus(categoryDTO.getStatus());
 
         // Guarda la categoría en la base de datos
         Category savedCategory = categoryService.save(category);
@@ -64,6 +65,7 @@ public class CategoryController {
 
             // Actualiza los atributos de la categoria con los valores del DTO
             existingCategory.setName(categoryDTO.getName());
+            existingCategory.setStatus(categoryDTO.getStatus());
 
             // Guarda la categoria actualizada en la base de datos
             Category updatedCategory = categoryService.save(existingCategory);

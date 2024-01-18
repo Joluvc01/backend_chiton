@@ -9,8 +9,9 @@ import java.io.Serializable;
 @Getter
 @Setter
 @AllArgsConstructor
-public class CategoryDTO implements Serializable {
+public class CategoryDTO {
 
     final Long id;
     final String name;
+    final Boolean status;
 }

@@ -4,17 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
-
 @Getter
 @Setter
 @AllArgsConstructor
-public class ProductDTO {
+public class UserDTO {
 
     final Long id;
-    final String name;
-    final String color;
-    final Double stock;
-    final String category;
+    final String username;
+    final String password;
+    final String role;
     final Boolean status;
 }

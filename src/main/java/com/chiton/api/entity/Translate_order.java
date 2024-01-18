@@ -35,6 +35,4 @@ public class Translate_order {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date generation_date;
 
-    @OneToMany(mappedBy = "translate_order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Translate_detail> details = new HashSet<>();
 }

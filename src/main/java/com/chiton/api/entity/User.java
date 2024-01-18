@@ -33,4 +33,7 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name = "role_id")
     private Role role_id;
+
+    @NotNull
+    private Boolean status;
 }
