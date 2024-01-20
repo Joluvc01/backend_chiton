@@ -11,10 +11,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 
 @Entity
 @Table(name = "purchase_order")

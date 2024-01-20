@@ -12,10 +12,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 
 @Entity
 @Table(name = "customer")
@@ -45,6 +44,4 @@ public class Customer {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Production_order> productionOrder = new HashSet<>();
 
-    @NotNull
-    private Boolean status;
 }

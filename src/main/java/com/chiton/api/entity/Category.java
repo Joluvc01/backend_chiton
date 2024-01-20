@@ -6,10 +6,9 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 
 @Entity
 @Table(name = "category")
@@ -24,6 +23,4 @@ public class Category {
     @Column(unique = true)
     private String name;
 
-    @NotNull
-    private Boolean status;
 }

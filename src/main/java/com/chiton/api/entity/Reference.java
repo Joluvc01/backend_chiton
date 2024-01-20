@@ -8,10 +8,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 
 @Entity
 @Table(name = "reference")
@@ -22,12 +21,12 @@ public class Reference {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "cusomer_id")
+    @JoinColumn(name = "customer_id")
     private Customer customer;
 
     @NotNull
     @Size(min = 1, max = 20)
-    private String descripcion;
+    private String description;
 
     @NotNull
     private String image;

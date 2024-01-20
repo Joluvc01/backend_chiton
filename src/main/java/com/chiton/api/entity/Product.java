@@ -7,10 +7,9 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 
 @Entity
 @Table(name = "product")
@@ -36,6 +35,4 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @NotNull
-    private Boolean status;
 }

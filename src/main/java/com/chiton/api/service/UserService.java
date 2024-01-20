@@ -9,8 +9,8 @@ import java.util.UUID;
 public interface UserService {
 
     public List<User> findAll();
-    User findByUsername(String username);
+    Optional<User> findByUsername(String username);
     public Optional<User> findById(Long id);
     public User save(User user);
-    public void delete(Long id);
+    public void deleteById(Long id);
 }

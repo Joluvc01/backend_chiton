@@ -13,6 +13,7 @@ public interface ProductService {
     public Optional<Product> findById(Long id);
 
     Product findByNameAndColor(String name, String color);
+    Product findByName(String name);
 
     public Page<Product> findByCategoryName(String categoryName, Pageable pageable);
 

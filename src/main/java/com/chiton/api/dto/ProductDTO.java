@@ -9,12 +9,11 @@ import java.io.Serializable;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ProductDTO {
+public class ProductDTO implements Serializable{
 
     final Long id;
     final String name;
     final String color;
     final Double stock;
     final String category;
-    final Boolean status;
 }
