@@ -69,7 +69,7 @@ public class ConvertDTO {
 
     public ReferenceDetail convertToReferenceDetail(ReferenceDetailDTO detailDTO, Reference reference) {
         ReferenceDetail referenceDetail = new ReferenceDetail();
-        referenceDetail.setProduct(productService.findByName(detailDTO.getProduct())); // Asegúrate de tener un método findByName en ProductService
+        referenceDetail.setProduct(productService.findByName(detailDTO.getProduct()));
         referenceDetail.setQuantity(detailDTO.getQuantity());
         referenceDetail.setReference(reference);
         return referenceDetail;

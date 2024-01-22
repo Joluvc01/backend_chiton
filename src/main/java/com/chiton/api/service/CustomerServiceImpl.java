@@ -2,6 +2,7 @@ package com.chiton.api.service;
 
 import com.chiton.api.entity.Customer;
 import com.chiton.api.repository.CustomerRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,7 @@ public class CustomerServiceImpl implements CustomerService{
         return customerRepository.findById(id);
     }
 
+    @Transactional
     @Override
     public Customer save(Customer customer) {
         return customerRepository.save(customer);

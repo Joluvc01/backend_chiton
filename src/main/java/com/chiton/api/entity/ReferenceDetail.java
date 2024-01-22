@@ -22,9 +22,9 @@ public class ReferenceDetail {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @JoinColumn(name = "reference_id", nullable = false)
+    @JoinColumn(name = "reference_id")
     @EqualsAndHashCode.Exclude
     private Reference reference;
 

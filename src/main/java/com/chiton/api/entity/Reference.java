@@ -1,5 +1,6 @@
 package com.chiton.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -30,7 +31,7 @@ public class Reference {
     @NotNull
     private String image;
 
-    @OneToMany(mappedBy = "reference", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "reference", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @EqualsAndHashCode.Exclude
     private List<ReferenceDetail> detail;
 

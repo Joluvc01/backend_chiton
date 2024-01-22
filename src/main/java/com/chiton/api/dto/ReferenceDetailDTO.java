@@ -1,17 +1,19 @@
 package com.chiton.api.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ReferenceDetailDTO implements Serializable {
 
+    @EqualsAndHashCode.Include
     final Long id;
+
+    @EqualsAndHashCode.Include
     final String product;
+
     final Double quantity;
 }
