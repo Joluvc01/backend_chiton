@@ -2,9 +2,9 @@ package com.chiton.api.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -20,18 +20,18 @@ public class Reference {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
     @NotNull
-    @Size(min = 1, max = 20)
     private String description;
 
     @NotNull
     private String image;
 
     @OneToMany(mappedBy = "reference", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Reference_detail> detail = new HashSet<>();
+    @EqualsAndHashCode.Exclude
+    private List<ReferenceDetail> detail;
 
 }

@@ -25,8 +25,8 @@ public class ReferenceServiceImpl implements ReferenceService{
     }
 
     @Override
-    public Reference findByCustomerName(String customer) {
-        return referenceRepository.findByCustomerName(customer);
+    public List<Reference> findAllByCustomerName(String customer) {
+        return referenceRepository.findAllByCustomerName(customer);
     }
 
     @Override

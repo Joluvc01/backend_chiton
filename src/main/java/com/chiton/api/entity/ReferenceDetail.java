@@ -1,5 +1,6 @@
 package com.chiton.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -10,21 +11,23 @@ import lombok.*;
 @NoArgsConstructor
 
 @Entity
-@Table(name = "purchase_detail")
-public class Purchase_detail {
+@Table(name = "reference_detail")
+public class ReferenceDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_id")
-    private Product product_id;
+    private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "detail", nullable = false)
-    private Purchase_order purchase_order;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JoinColumn(name = "reference_id", nullable = false)
+    @EqualsAndHashCode.Exclude
+    private Reference reference;
 
     @NotNull
-    private int quantity;
+    private Double quantity;
 }

@@ -2,13 +2,12 @@ package com.chiton.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -18,7 +17,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "production_order")
-public class Production_order {
+public class ProductionOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,5 +39,5 @@ public class Production_order {
     private Date deadline;
 
     @OneToMany(mappedBy = "production_order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Production_detail> details = new HashSet<>();
+    private List<ProductionDetail> details;
 }

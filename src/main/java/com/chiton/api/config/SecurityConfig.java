@@ -1,6 +1,5 @@
-package com.chiton.api.Config;
+package com.chiton.api.config;
 
-import com.chiton.api.entity.Role;
 import com.chiton.api.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +35,7 @@ public class SecurityConfig {
                                 .requestMatchers("/products/**").permitAll()//hasAnyAuthority("ALMACEN","GERENCIA","PRODUCCION")
                                 .requestMatchers("/users/**").permitAll()//hasAuthority("GERENCIA")
                                 .requestMatchers("/customers/**").permitAll()//hasAnyAuthority("GERENCIA","DISENIO")
-                                //.requestMatchers("/references/**").permitAll()//hasAnyAuthority("GERENCIA","DISENIO")
+                                .requestMatchers("/references/**").permitAll()//hasAnyAuthority("GERENCIA","DISENIO")
 
                                 //.anyRequest().authenticated()
                 )

@@ -1,4 +1,4 @@
-package com.chiton.api.Config;
+package com.chiton.api.config;
 
 import com.chiton.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

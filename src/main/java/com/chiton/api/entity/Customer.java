@@ -6,9 +6,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.annotations.Comment;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -42,6 +42,7 @@ public class Customer {
     private String email;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Production_order> productionOrder = new HashSet<>();
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private List<ProductionOrder> productionOrder;
 
 }

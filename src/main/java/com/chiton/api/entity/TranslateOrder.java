@@ -2,13 +2,10 @@ package com.chiton.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
 @Builder
@@ -16,12 +13,16 @@ import java.util.Set;
 @NoArgsConstructor
 
 @Entity
-@Table(name = "purchase_order")
-public class Purchase_order {
+@Table(name = "translate_order")
+public class TranslateOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToOne
+    @JoinColumn(name = "production_id")
+    private ProductionOrder production_order;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "generation_date", nullable = false, updatable = false)
@@ -29,6 +30,4 @@ public class Purchase_order {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date generation_date;
 
-    @OneToMany(mappedBy = "purchase_order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Purchase_detail> details = new HashSet<>();
 }

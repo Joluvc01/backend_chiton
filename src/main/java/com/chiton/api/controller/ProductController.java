@@ -65,7 +65,7 @@ public class ProductController {
             Category category = categoryService.findByName(productDTO.getCategory());
 
             if (category == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("La categoría no existe");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La categoría no existe");
             }
 
             newProduct.setCategory(category);

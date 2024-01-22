@@ -10,21 +10,21 @@ import lombok.*;
 @NoArgsConstructor
 
 @Entity
-@Table(name = "reference_detail")
-public class Reference_detail {
+@Table(name = "production_detail")
+public class ProductionDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "product_id")
-    private Product product_id;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "reference_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "reference_id")
     private Reference reference;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "production_id", nullable = false)
+    private ProductionOrder production_order;
+
     @NotNull
-    private Double quantity;
+    private int quantity;
 }
