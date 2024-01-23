@@ -57,15 +57,4 @@ public class CategoryController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Categoria no encontrada con ID: " + id);
         }
     }
-
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        Optional<Category> optionalCategory = categoryService.findById(id);
-        if (optionalCategory.isPresent()) {
-            categoryService.deleteById(id);
-            return ResponseEntity.status(HttpStatus.OK).body("Categoria eliminada con ID: " + id);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Categoria no encontrada con ID: " + id);
-        }
-    }
 }

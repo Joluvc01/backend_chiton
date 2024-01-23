@@ -39,7 +39,7 @@ public class ReferenceController {
         List<Reference> references = referenceService.findAll();
         List<ReferenceDTO> referenceDTOS = references.stream()
                 .map(convertDTO::convertToReferenceDTO)
-                .collect(Collectors.toList());
+                .toList();
         return ResponseEntity.ok(referenceDTOS);
     }
 
@@ -80,6 +80,7 @@ public class ReferenceController {
                 .body(convertDTO.convertToReferenceDTO(savedReference));
     }
 
+    @Transactional
     @PutMapping("/update/{referenceId}")
     public ResponseEntity<?> update(@PathVariable Long referenceId, @RequestBody ReferenceDTO updatedReferenceDTO) {
 
@@ -105,48 +106,47 @@ public class ReferenceController {
         existingReference.setDescription(updatedReferenceDTO.getDescription());
         existingReference.setImage(updatedReferenceDTO.getImage());
 
-        // Obtener los detalles existentes en la referencia
-        List<ReferenceDetail> existingDetails = existingReference.getDetail();
-
-        // Agregar los detalles existentes al mapa para su verificación
-        Map<String, ReferenceDetail> productDetailsMap = new HashMap<>();
-        for (ReferenceDetail existingDetail : existingDetails) {
-            Product existingProduct = existingDetail.getProduct();
-            String existingProductName = existingProduct.getName(); // Ajusta según la estructura de tu clase Product
-
-            // Agregar el detalle existente al mapa
-            productDetailsMap.put(existingProductName, existingDetail);
-        }
-
         // Verificar y procesar los nuevos detalles del DTO
-        ResponseEntity<?> detailDTO = handleReferenceDetails(updatedReferenceDTO, existingReference, productDetailsMap);
-        if (detailDTO != null) return detailDTO;
+        for (ReferenceDetailDTO detailDTO : updatedReferenceDTO.getDetails()) {
+            Product product = productService.findByName(detailDTO.getProduct());
+            if (product == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("El producto " + detailDTO.getProduct() + " en los detalles no existe");
+            }
 
+            // Verificar si ya existe un detalle para el mismo producto
+            String productName = detailDTO.getProduct();
+            ReferenceDetail existingDetail = null;
 
-        // Actualizar y guardar la referencia
-        existingReference = referenceService.save(existingReference);
+            for (ReferenceDetail detail : existingReference.getDetail()) {
+                if (detail.getProduct().getName().equals(productName)) {
+                    existingDetail = detail;
+                    break;
+                }
+            }
 
-        // Crear y asociar los detalles de referencia
-        if (productDetailsMap.isEmpty()) {
-            // Si la lista de detalles está vacía, eliminar todos los detalles asociados a la referencia
-            List<ReferenceDetail> currentDetails = existingReference.getDetail();
-            List<ReferenceDetail> newDetails = new ArrayList<>(productDetailsMap.values());
-
-            // Eliminar detalles que ya no están presentes
-            currentDetails.removeIf(detail -> !newDetails.contains(detail));
-
-            existingReference.setDetail(currentDetails);
-        } else {
-            // Si la lista de detalles no está vacía, crear y asociar los nuevos detalles
-            List<ReferenceDetail> referenceDetails = new ArrayList<>(productDetailsMap.values());
-
-            // Asociar los detalles a la referencia y guardarlos
-            existingReference.setDetail(referenceDetails);
+            if (existingDetail != null) {
+                // Actualizar la cantidad del detalle existente con la nueva cantidad
+                existingDetail.setQuantity(detailDTO.getQuantity());
+            } else {
+                // Crear un nuevo detalle y agregarlo a la lista de detalles
+                ReferenceDetail newDetail = convertDTO.convertToReferenceDetail(detailDTO, existingReference);
+                newDetail.setProduct(product);
+                existingReference.getDetail().add(newDetail);
+            }
         }
 
+        // Eliminar detalles que ya no están presentes
+        existingReference.getDetail().removeIf(detail ->
+                updatedReferenceDTO.getDetails().stream()
+                        .noneMatch(dto -> dto.getProduct().equals(detail.getProduct().getName())));
+
+        // Guardar la referencia actualizada
         existingReference = referenceService.save(existingReference);
+
         return ResponseEntity.ok(convertDTO.convertToReferenceDTO(existingReference));
     }
+
 
     private ResponseEntity<?> handleReferenceDetails(ReferenceDTO updatedReferenceDTO, Reference existingReference, Map<String, ReferenceDetail> productDetailsMap) {
         for (ReferenceDetailDTO detailDTO : updatedReferenceDTO.getDetails()) {
@@ -170,17 +170,5 @@ public class ReferenceController {
             }
         }
         return null;
-    }
-
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteReference(@PathVariable Long id) {
-        try {
-            referenceService.deleteById(id);
-            return ResponseEntity.ok("Referencia eliminada exitosamente.");
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar la referencia.");
-        }
     }
 }

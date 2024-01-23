@@ -31,8 +31,6 @@ public class Reference {
     @NotNull
     private String image;
 
-    @OneToMany(mappedBy = "reference", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "reference", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReferenceDetail> detail;
-
 }

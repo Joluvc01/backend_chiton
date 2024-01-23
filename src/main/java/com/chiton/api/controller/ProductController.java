@@ -100,18 +100,6 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Producto no encontrado con ID: " + productId);
         }
     }
-
-    @DeleteMapping("/delete/{productId}")
-    public ResponseEntity<?> delete(@PathVariable Long productId) {
-        Optional<Product> optionalProduct = productService.findById(productId);
-
-        if (optionalProduct.isPresent()) {
-            productService.deleteById(productId);
-            return ResponseEntity.ok("Categoria eliminada con ID: " + productId);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Producto no encontrada con ID: " + productId);
-        }
-    }
 }
 
 

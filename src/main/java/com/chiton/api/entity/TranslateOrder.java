@@ -27,7 +27,7 @@ public class TranslateOrder {
     @Temporal(TemporalType.DATE)
     @Column(name = "generation_date", nullable = false, updatable = false)
     @CreatedDate
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private Date generation_date;
 
 }

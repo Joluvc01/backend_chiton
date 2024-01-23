@@ -18,7 +18,4 @@ public interface ProductService {
     public Page<Product> findByCategoryName(String categoryName, Pageable pageable);
 
     public Product save(Product product);
-
-    public void deleteById(Long id);
-
 }

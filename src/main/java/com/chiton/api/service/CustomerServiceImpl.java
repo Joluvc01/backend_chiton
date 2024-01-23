@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CustomerServiceImpl implements CustomerService{
+public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -34,10 +34,5 @@ public class CustomerServiceImpl implements CustomerService{
     @Override
     public Customer save(Customer customer) {
         return customerRepository.save(customer);
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        customerRepository.deleteById(id);
     }
 }

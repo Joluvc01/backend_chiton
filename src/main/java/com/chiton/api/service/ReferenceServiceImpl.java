@@ -1,6 +1,7 @@
 package com.chiton.api.service;
 
 import com.chiton.api.entity.Reference;
+import com.chiton.api.entity.ReferenceDetail;
 import com.chiton.api.repository.ReferenceRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -34,21 +35,6 @@ public class ReferenceServiceImpl implements ReferenceService{
     @Override
     public Reference save(Reference reference) {
         return referenceRepository.save(reference);
-    }
-
-    @Override
-    @Transactional
-    public void deleteById(Long id) {
-        Reference reference = referenceRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Reference not found with id: " + id));
-
-        // Antes de eliminar la referencia principal, eliminamos los detalles asociados
-        if (reference.getDetail() != null) {
-            reference.getDetail().forEach(detail -> detail.setReference(null));
-            reference.getDetail().clear();
-        }
-
-        referenceRepository.delete(reference);
     }
 }
 

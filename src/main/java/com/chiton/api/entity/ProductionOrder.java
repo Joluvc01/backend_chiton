@@ -30,7 +30,7 @@ public class ProductionOrder {
     @Temporal(TemporalType.DATE)
     @Column(name = "generation_date", nullable = false, updatable = false)
     @CreatedDate
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private Date generation_date;
 
     @Temporal(TemporalType.DATE)
@@ -38,6 +38,6 @@ public class ProductionOrder {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date deadline;
 
-    @OneToMany(mappedBy = "production_order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "production_order", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     private List<ProductionDetail> details;
 }

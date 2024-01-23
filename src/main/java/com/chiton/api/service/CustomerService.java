@@ -13,7 +13,4 @@ public interface CustomerService {
     public Optional<Customer> findById(Long id);
 
     public Customer save(Customer customer);
-
-    public void deleteById(Long id);
-
 }

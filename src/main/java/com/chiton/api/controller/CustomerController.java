@@ -58,15 +58,4 @@ public class CustomerController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente no encontrado");
         }
     }
-
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        Optional<Customer> optionalCustomer = customerService.findById(id);
-        if (optionalCustomer.isPresent()) {
-            customerService.deleteById(id);
-            return ResponseEntity.ok("Cliente eliminado con ID: " + id);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente no encontrado con ID: " + id);
-        }
-    }
 }

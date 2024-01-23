@@ -21,10 +21,10 @@ public class PurchaseDetail {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "detail", nullable = false)
     private PurchaseOrder purchase_order;
 
     @NotNull
-    private int quantity;
+    private Double quantity;
 }

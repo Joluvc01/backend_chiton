@@ -32,9 +32,4 @@ public class UserServiceImpl implements UserService{
     public User save(User user) {
         return userRepository.save(user);
     }
-
-    @Override
-    public void deleteById(Long id) {
-        userRepository.deleteById(id);
-    }
 }

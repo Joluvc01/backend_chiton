@@ -15,5 +15,4 @@ public interface ReferenceService {
 
     public Reference save(Reference reference);
 
-    public void deleteById(Long id);
 }
