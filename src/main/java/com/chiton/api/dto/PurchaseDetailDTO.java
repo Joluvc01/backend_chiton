@@ -12,9 +12,7 @@ import java.io.Serializable;
 public class PurchaseDetailDTO implements Serializable {
 
     final Long id;
-
     final String product;
-
-    final Double quantity;
+    Double quantity;
 
 }

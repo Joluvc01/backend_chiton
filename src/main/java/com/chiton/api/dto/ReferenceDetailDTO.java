@@ -9,8 +9,6 @@ import java.io.Serializable;
 public class ReferenceDetailDTO implements Serializable {
 
     final Long id;
-
     final String product;
-
     Double quantity;
 }

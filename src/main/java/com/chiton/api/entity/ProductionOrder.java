@@ -23,8 +23,8 @@ public class ProductionOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "customer_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
     private Customer customer;
 
     @Temporal(TemporalType.DATE)
@@ -35,9 +35,9 @@ public class ProductionOrder {
 
     @Temporal(TemporalType.DATE)
     @Column(name = "deadline", nullable = false)
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private Date deadline;
 
-    @OneToMany(mappedBy = "production_order", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "production_order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductionDetail> details;
 }

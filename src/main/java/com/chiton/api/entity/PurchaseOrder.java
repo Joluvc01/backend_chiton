@@ -30,6 +30,6 @@ public class PurchaseOrder {
     @JsonFormat(pattern = "dd-MM-yyyy")
     private Date generation_date;
 
-    @OneToMany(mappedBy = "purchase_order", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "purchase_order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PurchaseDetail> details;
 }
