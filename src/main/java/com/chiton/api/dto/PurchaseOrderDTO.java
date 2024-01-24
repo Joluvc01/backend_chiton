@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +16,6 @@ import java.util.List;
 public class PurchaseOrderDTO implements Serializable{
 
     final Long id;
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    final Date generationDate;
+    final LocalDate generationDate;
     final List<PurchaseDetailDTO> details;
 }

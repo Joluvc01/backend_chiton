@@ -28,11 +28,6 @@ public class ReferenceServiceImpl implements ReferenceService{
     }
 
     @Override
-    public List<Reference> findAllByCustomerName(String customer) {
-        return referenceRepository.findAllByCustomerName(customer);
-    }
-
-    @Override
     public Reference save(Reference reference) {
         return referenceRepository.save(reference);
     }

@@ -11,8 +11,6 @@ public interface ReferenceService {
 
     public Optional<Reference> findById(Long id);
 
-    public List<Reference> findAllByCustomerName(String customer);
-
     public Reference save(Reference reference);
 
 }

@@ -37,6 +37,7 @@ public class SecurityConfig {
                                 .requestMatchers("/customers/**").permitAll()//hasAnyAuthority("GERENCIA","DISENIO")
                                 .requestMatchers("/references/**").permitAll()//hasAnyAuthority("GERENCIA","DISENIO")
                                 .requestMatchers("/purchaseOrders/**").permitAll()//hasAnyAuthority("GERENCIA","DISENIO")
+                                .requestMatchers("/productionOrders/**").permitAll()//hasAnyAuthority("GERENCIA","DISENIO")
 
                                 //.anyRequest().authenticated()
                 )

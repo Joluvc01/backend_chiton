@@ -1,14 +1,11 @@
 package com.chiton.api.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDate;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @Builder
@@ -28,12 +25,10 @@ public class ProductionOrder {
     private Customer customer;
 
     @Column(name = "generationDate", nullable = false, updatable = false)
-    @CreatedDate
-    private Date generationDate;
+    private LocalDate generationDate;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "deadline", nullable = false)
-    private Date deadline;
+    private LocalDate deadline;
 
     @OneToMany(mappedBy = "productionOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductionDetail> details;

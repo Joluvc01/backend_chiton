@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 @RestController
@@ -52,7 +53,7 @@ public class PurchaseOrderController {
 
         //Crear nueva orden de Compra
         PurchaseOrder newpurchaseOrder = new PurchaseOrder();
-        Date date = Date.valueOf(LocalDate.now());
+        LocalDate date = LocalDate.now(ZoneId.of("America/Lima"));
         newpurchaseOrder.setGenerationDate(date);
 
         // Mapa para realizar un seguimiento de los detalles del JSON por producto
@@ -92,7 +93,7 @@ public class PurchaseOrderController {
         PurchaseOrder savedpurchaseOrder = purchaseOrderService.save(newpurchaseOrder);
 
         return ResponseEntity
-                .created(URI.create("/api/references/" + savedpurchaseOrder.getId()))
+                .status(HttpStatus.CREATED)
                 .body(convertDTO.convertToPurchaseOrderDTO(savedpurchaseOrder));
 
     }

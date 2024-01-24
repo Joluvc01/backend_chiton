@@ -14,7 +14,6 @@ import java.util.Set;
 public class ReferenceDTO implements Serializable {
 
     final Long id;
-    final String customer;
     final String description;
     final String image;
     final List<ReferenceDetailDTO> details;

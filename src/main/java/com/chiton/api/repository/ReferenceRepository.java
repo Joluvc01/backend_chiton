@@ -10,5 +10,4 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReferenceRepository extends JpaRepository<Reference,Long> {
-    List<Reference> findAllByCustomerName(String customer);
 }

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class ProductionOrderDTO implements Serializable {
 
     final Long id;
     final String customer;
-    final Date generationDate;
-    final Date deadline;
-    final List<ProductionDetailDTO> detail;
+    final LocalDate generationDate;
+    final LocalDate deadline;
+    final List<ProductionDetailDTO> details;
 }

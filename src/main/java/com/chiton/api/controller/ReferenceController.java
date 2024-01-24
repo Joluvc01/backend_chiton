@@ -30,6 +30,7 @@ public class ReferenceController {
 
     @Autowired
     private ProductService productService;
+
     @Autowired
     private ConvertDTO convertDTO;
 
@@ -52,15 +53,8 @@ public class ReferenceController {
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody ReferenceDTO referenceDTO) {
 
-        // Verificar si el cliente existe
-        Customer customer = customerService.findByName(referenceDTO.getCustomer());
-        if (customer == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El cliente no existe");
-        }
-
         // Crear la nueva referencia
         Reference newReference = new Reference();
-        newReference.setCustomer(customer);
         newReference.setDescription(referenceDTO.getDescription());
         newReference.setImage(referenceDTO.getImage());
 
@@ -95,13 +89,13 @@ public class ReferenceController {
             referenceDetails.add(newDetail);
         }
 
-        newReference.setDetail(referenceDetails);
+        newReference.setDetails(referenceDetails);
 
         // Guardar todo dentro de una transacción
         Reference savedReference = referenceService.save(newReference);
 
         return ResponseEntity
-                .created(URI.create("/api/references/" + savedReference.getId()))
+                .status(HttpStatus.CREATED)
                 .body(convertDTO.convertToReferenceDTO(savedReference));
     }
 
@@ -121,14 +115,7 @@ public class ReferenceController {
         // Obtener la referencia del Optional
         Reference existingReference = optionalExistingReference.get();
 
-        // Verificar si el cliente existe
-        Customer customer = customerService.findByName(updatedReferenceDTO.getCustomer());
-        if (customer == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El cliente no existe");
-        }
-
         // Actualizar la referencia con los nuevos datos
-        existingReference.setCustomer(customer);
         existingReference.setDescription(updatedReferenceDTO.getDescription());
         existingReference.setImage(updatedReferenceDTO.getImage());
 
@@ -167,12 +154,12 @@ public class ReferenceController {
                 // Si no existe, crear un nuevo detalle y agregarlo a la lista
                 ReferenceDetail newDetail = convertDTO.convertToReferenceDetail(detailDTO, existingReference);
                 newDetail.setProduct(product);
-                existingReference.getDetail().add(newDetail);
+                existingReference.getDetails().add(newDetail);
             }
         }
 
         // Eliminar detalles que ya no están presentes
-        existingReference.getDetail().removeIf(detail ->
+        existingReference.getDetails().removeIf(detail ->
                 productDetailsMap.values().stream()
                         .noneMatch(dto -> dto.getProduct().equals(detail.getProduct().getName())));
 
@@ -185,7 +172,7 @@ public class ReferenceController {
 
     // Método para obtener el detalle existente por nombre de producto
     private ReferenceDetail getExistingDetail(Reference existingReference, String productName) {
-        for (ReferenceDetail detail : existingReference.getDetail()) {
+        for (ReferenceDetail detail : existingReference.getDetails()) {
             if (detail.getProduct().getName().equals(productName)) {
                 return detail;
             }

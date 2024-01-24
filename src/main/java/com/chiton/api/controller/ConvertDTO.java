@@ -17,6 +17,8 @@ public class ConvertDTO {
 
     @Autowired
     private ProductService productService;
+    @Autowired
+    private ReferenceService referenceService;
 
     public ProductDTO convertToProductDTO(Product product) {
         String category = (product.getName() != null) ? product.getCategory().getName() : null;
@@ -40,15 +42,12 @@ public class ConvertDTO {
     }
 
     public ReferenceDTO convertToReferenceDTO(Reference reference) {
-        String customer = reference.getCustomer().getName();
-
-        List<ReferenceDetailDTO> details = reference.getDetail() != null
-                ? reference.getDetail().stream().map(this::convertToReferenceDetailDTO).toList()
+        List<ReferenceDetailDTO> details = reference.getDetails() != null
+                ? reference.getDetails().stream().map(this::convertToReferenceDetailDTO).toList()
                 : null;
 
         return new ReferenceDTO(
                 reference.getId(),
-                customer,
                 reference.getDescription(),
                 reference.getImage(),
                 details
@@ -101,5 +100,38 @@ public class ConvertDTO {
         purchaseDetail.setQuantity(detailDTO.getQuantity());
         purchaseDetail.setPurchaseOrder(purchaseOrder);
         return purchaseDetail;
+    }
+
+    public ProductionOrderDTO convertToProductionOrderDTO(ProductionOrder productionOrder){
+        String customer = (productionOrder.getCustomer() != null) ? productionOrder.getCustomer().getName() : null;
+        List<ProductionDetailDTO> details = productionOrder.getDetails() != null
+                ? productionOrder.getDetails().stream().map(this::convertToProductionDetailDTO).toList()
+                : null;
+
+        return new ProductionOrderDTO(
+                productionOrder.getId(),
+                customer,
+                productionOrder.getGenerationDate(),
+                productionOrder.getDeadline(),
+                details
+        );
+    }
+
+    public ProductionDetailDTO convertToProductionDetailDTO(ProductionDetail detail){
+        Long reference = (detail.getReference() != null) ? detail.getReference().getId() : null;
+
+        return  new ProductionDetailDTO(
+                detail.getId(),
+                reference,
+                detail.getQuantity()
+        );
+    }
+
+    public ProductionDetail convertToProductionDetail(ProductionDetailDTO detailDTO, ProductionOrder productionOrder){
+        ProductionDetail productionDetail = new ProductionDetail();
+        productionDetail.setReference(referenceService.findById(detailDTO.getReference()).get());
+        productionDetail.setQuantity(detailDTO.getQuantity());
+        productionDetail.setProductionOrder(productionOrder);
+        return productionDetail;
     }
 }

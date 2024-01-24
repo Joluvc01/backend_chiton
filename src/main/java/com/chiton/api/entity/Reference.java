@@ -21,10 +21,6 @@ public class Reference {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
-
     @NotNull
     private String description;
 
@@ -32,5 +28,5 @@ public class Reference {
     private String image;
 
     @OneToMany(mappedBy = "reference", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ReferenceDetail> detail;
+    private List<ReferenceDetail> details;
 }

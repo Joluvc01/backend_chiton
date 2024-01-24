@@ -13,6 +13,6 @@ import java.io.Serializable;
 public class ProductionDetailDTO implements Serializable {
 
     final Long id;
-    final String reference;
+    final Long reference;
     Double quantity;
 }
