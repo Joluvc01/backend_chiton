@@ -38,6 +38,7 @@ public class SecurityConfig {
                                 .requestMatchers("/references/**").permitAll()//hasAnyAuthority("GERENCIA","DISENIO")
                                 .requestMatchers("/purchaseOrders/**").permitAll()//hasAnyAuthority("GERENCIA","DISENIO")
                                 .requestMatchers("/productionOrders/**").permitAll()//hasAnyAuthority("GERENCIA","DISENIO")
+                                .requestMatchers("/translateOrders/**").permitAll()//hasAnyAuthority("GERENCIA","DISENIO")
 
                                 //.anyRequest().authenticated()
                 )

@@ -7,10 +7,7 @@ import com.chiton.api.service.ReferenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class ConvertDTO {
@@ -120,7 +117,7 @@ public class ConvertDTO {
     public ProductionDetailDTO convertToProductionDetailDTO(ProductionDetail detail){
         Long reference = (detail.getReference() != null) ? detail.getReference().getId() : null;
 
-        return  new ProductionDetailDTO(
+        return new ProductionDetailDTO(
                 detail.getId(),
                 reference,
                 detail.getQuantity()
@@ -133,5 +130,15 @@ public class ConvertDTO {
         productionDetail.setQuantity(detailDTO.getQuantity());
         productionDetail.setProductionOrder(productionOrder);
         return productionDetail;
+    }
+
+    public TranslateOrderDTO convertToTranslateOrderDTO(TranslateOrder translateOrder){
+        Long prodId = (translateOrder.getProductionOrder() != null) ? translateOrder.getProductionOrder().getId() : null;
+
+        return new TranslateOrderDTO(
+                translateOrder.getId(),
+                prodId,
+                translateOrder.getGenerationDate()
+        );
     }
 }

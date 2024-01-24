@@ -26,9 +26,6 @@ public class ReferenceController {
     private ReferenceService referenceService;
 
     @Autowired
-    private CustomerService customerService;
-
-    @Autowired
     private ProductService productService;
 
     @Autowired

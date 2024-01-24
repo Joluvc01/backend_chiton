@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -27,6 +28,6 @@ public class TranslateOrder {
     @Temporal(TemporalType.DATE)
     @Column(name = "generation_date", nullable = false, updatable = false)
     @CreatedDate
-    private Date generationDate;
+    private LocalDate generationDate;
 
 }
