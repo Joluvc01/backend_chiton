@@ -3,24 +3,19 @@ package com.chiton.api.controller;
 
 import com.chiton.api.dto.PurchaseDetailDTO;
 import com.chiton.api.dto.PurchaseOrderDTO;
-import com.chiton.api.entity.Product;
-import com.chiton.api.entity.PurchaseDetail;
-import com.chiton.api.entity.PurchaseOrder;
+import com.chiton.api.dto.ReferenceDetailDTO;
+import com.chiton.api.entity.*;
 import com.chiton.api.service.ProductService;
 import com.chiton.api.service.PurchaseOrderService;
-import jakarta.annotation.Nullable;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.sql.Date;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @RestController
@@ -51,108 +46,128 @@ public class PurchaseOrderController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @Transactional
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody PurchaseOrderDTO purchaseOrderDTO) throws ParseException {
+    public ResponseEntity<?> create(@RequestBody PurchaseOrderDTO purchaseOrderDTO){
 
-        // Crear la nueva orden de Compra
-        PurchaseOrder newOrder = new PurchaseOrder();
-        Date currentDate = new Date();
+        //Crear nueva orden de Compra
+        PurchaseOrder newpurchaseOrder = new PurchaseOrder();
+        Date date = Date.valueOf(LocalDate.now());
+        newpurchaseOrder.setGenerationDate(date);
 
-        // Formatear la fecha al formato "dd-MM-yyyy"
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        String formattedDate = sdf.format(currentDate);
-        Date parsedDate = sdf.parse(formattedDate);
-        newOrder.setGeneration_date(parsedDate);
+        // Mapa para realizar un seguimiento de los detalles del JSON por producto
+        Map<String, PurchaseDetailDTO> productsDetailMap = new HashMap<>();
 
-        // Validar la existencia de los productos en los detalles y manejar duplicados
-        Map<String, PurchaseDetail> productDetailsMap = new HashMap<>();
-        ResponseEntity<?> detailDTO = hanldePurchaseDetails(purchaseOrderDTO, newOrder, productDetailsMap);
-        if (detailDTO != null) return detailDTO;
-
-        // Asociar los detalles a la referencia y guardar todo dentro de una transacción
-        List<PurchaseDetail> purchaseDetails = new ArrayList<>(productDetailsMap.values());
-        newOrder.setDetails(purchaseDetails);
-        PurchaseOrder savedPurchaseOrder = purchaseOrderService.save(newOrder);
-
-        return ResponseEntity
-                .created(URI.create("/api/purchaseOrders" + savedPurchaseOrder.getId()))
-                .body(convertDTO.convertToPurchaseOrderDTO(savedPurchaseOrder));
-    }
-
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody PurchaseOrderDTO updatedPurchaseOrderDTO){
-
-        //Buscar la orden de compra
-        Optional<PurchaseOrder> optionalPurchaseOrder = purchaseOrderService.findById(id);
-
-        //Verificar si la referencia existe
-        if(optionalPurchaseOrder.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La orden de compra no existe");
-        }
-
-        //Obtener Orden de Compra del Optional
-        PurchaseOrder existingPurchaseOrder = optionalPurchaseOrder.get();
-
-        //Crear y asociar los detalles de compra
-        if(updatedPurchaseOrderDTO.getDetails().isEmpty()){
-            System.out.println("Eliminamos");
-            //Si la lista de detalles esta vacia, eliminar todos los detalles asociados a la orden de compra
-            List<PurchaseDetail> newDetails = new ArrayList<>();
-
-            //Eliminar detalles que ya no estan presentes
-            existingPurchaseOrder.setDetails(newDetails);
-        } else {
-            System.out.println("No Eliminamos");
-            //Obtener detalles existentes de la orden de Compra
-            List<PurchaseDetail> existingDetails = existingPurchaseOrder.getDetails();
-
-            //Agregar los detalles existentes al mapa de verificacion
-            Map<String, PurchaseDetail> purchaseDetailMap = new HashMap<>();
-            for (PurchaseDetail existingDetail : existingDetails){
-                Product existingProduct = existingDetail.getProduct();
-                String existingProductName = existingProduct.getName();
-
-                //Agregar Detalle existente al mapa
-                purchaseDetailMap.put(existingProductName, existingDetail);
+        // Combinar cantidades de detalles con el mismo producto
+        for (PurchaseDetailDTO detailDTO : purchaseOrderDTO.getDetails()){
+            String productName = detailDTO.getProduct();
+            if(productsDetailMap.containsKey(productName)){
+                //Si ya exist, sumar la cantidad al detalle existente
+                PurchaseDetailDTO existingDetailDTO = productsDetailMap.get(productName);
+                existingDetailDTO.setQuantity(existingDetailDTO.getQuantity() + detailDTO.getQuantity());
+            } else {
+                //Si el producto no existe, agregar el detalle al mapa
+                productsDetailMap.put(productName, detailDTO);
             }
-
-            //Verificar y procesar los nuevos detalles del DTO
-            ResponseEntity<?> detailDTO = hanldePurchaseDetails(updatedPurchaseOrderDTO, existingPurchaseOrder, purchaseDetailMap);
-            if (detailDTO != null) return detailDTO;
-
-            //Actualizar y guardar la referencia
-            existingPurchaseOrder = purchaseOrderService.save(existingPurchaseOrder);
-            //Si la lista de detalles no esta vacia, crear y asociar los nuevos detalles
-            List<PurchaseDetail> purchaseDetails = new ArrayList<>(purchaseDetailMap.values());
-
-            //Asociar los detalles a la referencia y guardarlos
-            existingPurchaseOrder.setDetails(purchaseDetails);
         }
 
-        existingPurchaseOrder = purchaseOrderService.save(existingPurchaseOrder);
-        return ResponseEntity.ok(convertDTO.convertToPurchaseOrderDTO(existingPurchaseOrder));
-    }
+        //Asociar los detalles al orden de compra
+        List<PurchaseDetail> purchaseDetails = new ArrayList<>();
 
-    @Nullable
-    private ResponseEntity<?> hanldePurchaseDetails(PurchaseOrderDTO updatePurchaseOrderDTO, PurchaseOrder existingPurchaseOrder, Map<String, PurchaseDetail> productDetailsMap){
-        for (PurchaseDetailDTO detailDTO : updatePurchaseOrderDTO.getDetails()){
+        for (PurchaseDetailDTO detailDTO : productsDetailMap.values()){
             Product product = productService.findByName(detailDTO.getProduct());
             if (product == null){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("El producto " + detailDTO.getProduct() + " en los detalles no existe");
+                        .body("El producto" + detailDTO.getProduct() + " no existe");
+            }
+
+            PurchaseDetail newDetail = convertDTO.converToPurchaseDetail(detailDTO, newpurchaseOrder);
+            newDetail.setProduct(product);
+            purchaseDetails.add(newDetail);
+        }
+
+        newpurchaseOrder.setDetails(purchaseDetails);
+
+        //Guardar todo dentro de una transaccion
+        PurchaseOrder savedpurchaseOrder = purchaseOrderService.save(newpurchaseOrder);
+
+        return ResponseEntity
+                .created(URI.create("/api/references/" + savedpurchaseOrder.getId()))
+                .body(convertDTO.convertToPurchaseOrderDTO(savedpurchaseOrder));
+
+    }
+
+    @Transactional
+    @PutMapping("/update/{purchaseId}")
+    public ResponseEntity<?> update(@PathVariable Long purchaseId, @RequestBody PurchaseOrderDTO updatedpurchaseOrderDTO){
+
+        // Buscar la orden de compra existente
+        Optional<PurchaseOrder> optionalExistingPurchase = purchaseOrderService.findById(purchaseId);
+
+        // Verificar si la orden de compra existe
+        if (optionalExistingPurchase.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La orden de compra no existe");
+        }
+
+        // Obtener la referencia del Optional
+        PurchaseOrder existingPurchase = optionalExistingPurchase.get();
+
+        // Mapa para realizar un seguimiento de los detalles del JSON por producto
+        Map<String, PurchaseDetailDTO> productDetailsMap = new HashMap<>();
+
+        // Combinar cantidades de detalles con el mismo producto
+        for (PurchaseDetailDTO detailDTO : updatedpurchaseOrderDTO.getDetails()) {
+            String productName = detailDTO.getProduct();
+            if (productDetailsMap.containsKey(productName)) {
+                // Si ya existe, sumar la cantidad al detalle existente
+                PurchaseDetailDTO existingDetailDTO = productDetailsMap.get(productName);
+                existingDetailDTO.setQuantity(existingDetailDTO.getQuantity() + detailDTO.getQuantity());
+            } else {
+                // Si no existe, agregar el detalle al mapa
+                productDetailsMap.put(productName, detailDTO);
+            }
+        }
+
+        // Verificar y procesar los detalles combinados del mapa
+        for (PurchaseDetailDTO detailDTO : productDetailsMap.values()) {
+            Product product = productService.findByName(detailDTO.getProduct());
+            if (product == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("El producto " + detailDTO.getProduct() + " no existe");
             }
 
             // Verificar si ya existe un detalle para el mismo producto
             String productName = detailDTO.getProduct();
-            PurchaseDetail existingDetail = productDetailsMap.get(productName);
-            if (existingDetail != null){
-                // Sumar la cantidad al detalle existente
-                existingDetail.setQuantity(existingDetail.getQuantity() + detailDTO.getQuantity());
+            PurchaseDetail existingDetail = getExistingDetail(existingPurchase, productName);
+
+            if (existingDetail != null) {
+                // Si existe, actualizar la cantidad del detalle existente con la nueva cantidad
+                existingDetail.setQuantity(detailDTO.getQuantity());
             } else {
-                // Crear un nuevo detalle y agregarlo al mapa
-                PurchaseDetail newDetail = convertDTO.converToPurchaseDetail(detailDTO, existingPurchaseOrder);
+                // Si no existe, crear un nuevo detalle y agregarlo a la lista
+                PurchaseDetail newDetail = convertDTO.converToPurchaseDetail(detailDTO, existingPurchase);
                 newDetail.setProduct(product);
-                productDetailsMap.put(productName, newDetail);
+                existingPurchase.getDetails().add(newDetail);
+            }
+        }
+
+        // Eliminar detalles que ya no están presentes
+        existingPurchase.getDetails().removeIf(detail ->
+                productDetailsMap.values().stream()
+                        .noneMatch(dto -> dto.getProduct().equals(detail.getProduct().getName())));
+
+        // Guardar la referencia actualizada
+        existingPurchase = purchaseOrderService.save(existingPurchase);
+
+
+        return ResponseEntity.ok(convertDTO.convertToPurchaseOrderDTO(existingPurchase));
+    }
+
+    // Método para obtener el detalle existente por nombre de producto
+    private PurchaseDetail getExistingDetail(PurchaseOrder existingPurchaseOrder, String productName){
+        for (PurchaseDetail detail : existingPurchaseOrder.getDetails()){
+            if (detail.getProduct().getName().equals(productName)){
+                return detail;
             }
         }
         return null;

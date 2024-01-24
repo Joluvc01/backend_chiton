@@ -1,6 +1,5 @@
 package com.chiton.api.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,10 +11,11 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class PurchaseOrderDTO implements Serializable{
+public class ProductionOrderDTO implements Serializable {
 
     final Long id;
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    final String customer;
     final Date generationDate;
-    final List<PurchaseDetailDTO> details;
+    final Date deadline;
+    final List<ProductionDetailDTO> detail;
 }

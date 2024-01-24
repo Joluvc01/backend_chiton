@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 
 @Entity
-@Table(name = "purchase_detail")
+@Table(name = "purchaseDetail")
 public class PurchaseDetail {
 
     @Id
@@ -25,7 +25,7 @@ public class PurchaseDetail {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name = "detail")
-    private PurchaseOrder purchase_order;
+    private PurchaseOrder purchaseOrder;
 
     @NotNull
     private Double quantity;

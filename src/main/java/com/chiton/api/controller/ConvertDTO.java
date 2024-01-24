@@ -73,23 +73,6 @@ public class ConvertDTO {
         return referenceDetail;
     }
 
-    public List<ReferenceDetail> convertToReferenceDetailList(List<ReferenceDetailDTO> detailDTOList, Reference reference) {
-        List<ReferenceDetail> referenceDetails = new ArrayList<>();
-
-        for (ReferenceDetailDTO detailDTO : detailDTOList) {
-            Product product = productService.findByName(detailDTO.getProduct());
-
-            if (product != null) {
-                ReferenceDetail referenceDetail = convertToReferenceDetail(detailDTO, reference);
-                referenceDetail.setProduct(product);
-                referenceDetails.add(referenceDetail);
-            }
-        }
-
-        return referenceDetails;
-    }
-
-
     public PurchaseOrderDTO convertToPurchaseOrderDTO(PurchaseOrder purchaseOrder){
         List<PurchaseDetailDTO> details = purchaseOrder.getDetails() != null
                 ? purchaseOrder.getDetails().stream().map(this::convertToPurchaseDetailDTO).toList()
@@ -97,7 +80,7 @@ public class ConvertDTO {
 
         return new PurchaseOrderDTO(
                 purchaseOrder.getId(),
-                purchaseOrder.getGeneration_date(),
+                purchaseOrder.getGenerationDate(),
                 details
         );
     }
@@ -116,7 +99,7 @@ public class ConvertDTO {
         PurchaseDetail purchaseDetail = new PurchaseDetail();
         purchaseDetail.setProduct(productService.findByName(detailDTO.getProduct()));
         purchaseDetail.setQuantity(detailDTO.getQuantity());
-        purchaseDetail.setPurchase_order(purchaseOrder);
+        purchaseDetail.setPurchaseOrder(purchaseOrder);
         return purchaseDetail;
     }
 }

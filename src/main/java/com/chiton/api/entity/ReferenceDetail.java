@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 
 @Entity
-@Table(name = "reference_detail")
+@Table(name = "referenceDetail")
 public class ReferenceDetail {
 
     @Id

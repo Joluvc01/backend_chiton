@@ -13,7 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 
 @Entity
-@Table(name = "translate_order")
+@Table(name = "translateOrder")
 public class TranslateOrder {
 
     @Id
@@ -22,12 +22,11 @@ public class TranslateOrder {
 
     @OneToOne
     @JoinColumn(name = "production_id")
-    private ProductionOrder production_order;
+    private ProductionOrder productionOrder;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "generation_date", nullable = false, updatable = false)
     @CreatedDate
-    @JsonFormat(pattern = "dd-MM-yyyy")
-    private Date generation_date;
+    private Date generationDate;
 
 }

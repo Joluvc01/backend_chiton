@@ -29,10 +29,9 @@ public class ReferenceController {
     private CustomerService customerService;
 
     @Autowired
-    private ConvertDTO convertDTO;
-
-    @Autowired
     private ProductService productService;
+    @Autowired
+    private ConvertDTO convertDTO;
 
     @GetMapping()
     public ResponseEntity<?> findAll(){
@@ -88,7 +87,7 @@ public class ReferenceController {
             Product product = productService.findByName(detailDTO.getProduct());
             if (product == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("El producto " + detailDTO.getProduct() + " en los detalles no existe");
+                        .body("El producto " + detailDTO.getProduct() + " no existe");
             }
 
             ReferenceDetail newDetail = convertDTO.convertToReferenceDetail(detailDTO, newReference);
@@ -154,7 +153,7 @@ public class ReferenceController {
             Product product = productService.findByName(detailDTO.getProduct());
             if (product == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("El producto " + detailDTO.getProduct() + " en los detalles no existe");
+                        .body("El producto " + detailDTO.getProduct() + " no existe");
             }
 
             // Verificar si ya existe un detalle para el mismo producto

@@ -16,7 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 
 @Entity
-@Table(name = "production_order")
+@Table(name = "productionOrder")
 public class ProductionOrder {
 
     @Id
@@ -27,17 +27,14 @@ public class ProductionOrder {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "generation_date", nullable = false, updatable = false)
+    @Column(name = "generationDate", nullable = false, updatable = false)
     @CreatedDate
-    @JsonFormat(pattern = "dd-MM-yyyy")
-    private Date generation_date;
+    private Date generationDate;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "deadline", nullable = false)
-    @JsonFormat(pattern = "dd-MM-yyyy")
     private Date deadline;
 
-    @OneToMany(mappedBy = "production_order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "productionOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductionDetail> details;
 }
