@@ -1,10 +1,7 @@
 package com.chiton.api.service;
 
 import com.chiton.api.entity.Reference;
-import com.chiton.api.entity.ReferenceDetail;
 import com.chiton.api.repository.ReferenceRepository;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

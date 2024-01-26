@@ -1,10 +1,8 @@
 package com.chiton.api.dto;
 
-import com.chiton.api.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.io.Serializable;
 
 @Getter

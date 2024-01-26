@@ -3,7 +3,6 @@ package com.chiton.api.controller;
 
 import com.chiton.api.dto.PurchaseDetailDTO;
 import com.chiton.api.dto.PurchaseOrderDTO;
-import com.chiton.api.dto.ReferenceDetailDTO;
 import com.chiton.api.entity.*;
 import com.chiton.api.service.ProductService;
 import com.chiton.api.service.PurchaseOrderService;
@@ -13,8 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;

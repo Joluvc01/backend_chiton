@@ -1,12 +1,13 @@
 package com.chiton.api.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-
+import lombok.Getter;
+import lombok.Setter;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 public class TranslateOrderDTO implements Serializable {
 

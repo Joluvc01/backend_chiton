@@ -3,20 +3,15 @@ package com.chiton.api.controller;
 import com.chiton.api.dto.ReferenceDTO;
 import com.chiton.api.dto.ReferenceDetailDTO;
 import com.chiton.api.entity.*;
-import com.chiton.api.service.CustomerService;
 import com.chiton.api.service.ProductService;
 import com.chiton.api.service.ReferenceService;
-import jakarta.annotation.Nullable;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/references")

@@ -1,10 +1,8 @@
 package com.chiton.api.service;
 
 import com.chiton.api.entity.User;
-
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface UserService {
 

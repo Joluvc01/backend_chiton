@@ -1,8 +1,6 @@
 package com.chiton.api.service;
 
-import com.chiton.api.entity.Product;
 import com.chiton.api.entity.ProductionOrder;
-
 import java.util.List;
 import java.util.Optional;
 

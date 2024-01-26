@@ -39,7 +39,6 @@ public class SecurityConfig {
                                 .requestMatchers("/purchaseOrders/**").permitAll()//hasAnyAuthority("GERENCIA","DISENIO")
                                 .requestMatchers("/productionOrders/**").permitAll()//hasAnyAuthority("GERENCIA","DISENIO")
                                 .requestMatchers("/translateOrders/**").permitAll()//hasAnyAuthority("GERENCIA","DISENIO")
-
                                 //.anyRequest().authenticated()
                 )
                 .authenticationProvider(authProvider)

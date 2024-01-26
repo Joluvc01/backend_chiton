@@ -2,20 +2,16 @@ package com.chiton.api.controller;
 
 import com.chiton.api.dto.ProductionDetailDTO;
 import com.chiton.api.dto.ProductionOrderDTO;
-import com.chiton.api.dto.ReferenceDetailDTO;
 import com.chiton.api.entity.*;
 import com.chiton.api.service.CustomerService;
 import com.chiton.api.service.ProductionOrderService;
 import com.chiton.api.service.ReferenceService;
-import jakarta.transaction.TransactionScoped;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
