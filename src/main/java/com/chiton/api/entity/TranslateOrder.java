@@ -24,7 +24,7 @@ public class TranslateOrder {
     private ProductionOrder productionOrder;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "generation_date", nullable = false, updatable = false)
+    @Column(name = "generation_date", updatable = false)
     @CreatedDate
     private LocalDate generationDate;
 

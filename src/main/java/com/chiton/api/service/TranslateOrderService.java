@@ -12,4 +12,6 @@ public interface TranslateOrderService {
 
     public TranslateOrder save(TranslateOrder translateOrder);
 
+    public void deleteById(Long id);
+
 }

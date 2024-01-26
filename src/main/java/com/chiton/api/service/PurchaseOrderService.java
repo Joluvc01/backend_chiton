@@ -11,4 +11,6 @@ public interface PurchaseOrderService {
     public Optional<PurchaseOrder> findById(Long id);
 
     public PurchaseOrder save(PurchaseOrder purchaseOrder);
+
+    public void deleteById(Long id);
 }

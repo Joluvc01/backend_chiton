@@ -14,5 +14,6 @@ public class ReferenceDTO implements Serializable {
     final Long id;
     final String description;
     final String image;
+    final Boolean status;
     final List<ReferenceDetailDTO> details;
 }

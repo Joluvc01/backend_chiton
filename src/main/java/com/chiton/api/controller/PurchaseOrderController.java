@@ -40,7 +40,8 @@ public class PurchaseOrderController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id){
-        return purchaseOrderService.findById(id).map(ord -> ResponseEntity.ok(convertDTO.convertToPurchaseOrderDTO(ord)))
+        return purchaseOrderService.findById(id)
+                .map(ord -> ResponseEntity.ok(convertDTO.convertToPurchaseOrderDTO(ord)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -96,7 +97,7 @@ public class PurchaseOrderController {
     }
 
     @Transactional
-    @PutMapping("/update/{purchaseId}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> update(@PathVariable Long purchaseId, @RequestBody PurchaseOrderDTO updatedpurchaseOrderDTO){
 
         // Buscar la orden de compra existente
@@ -169,5 +170,20 @@ public class PurchaseOrderController {
             }
         }
         return null;
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteById(@PathVariable Long id){
+        Optional<PurchaseOrder> optionalPurchaseOrder = purchaseOrderService.findById(id);
+
+        if(optionalPurchaseOrder.isPresent()){
+            PurchaseOrder purchaseOrder = optionalPurchaseOrder.get();
+            purchaseOrder.getDetails().clear();
+            purchaseOrderService.deleteById(id);
+            return ResponseEntity.ok("Orden de compra eliminada");
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Orden de compra no encontrada");
+        }
     }
 }

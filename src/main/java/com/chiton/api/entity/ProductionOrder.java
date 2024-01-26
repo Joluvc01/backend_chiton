@@ -31,4 +31,7 @@ public class ProductionOrder {
 
     @OneToMany(mappedBy = "productionOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductionDetail> details;
+
+    @OneToOne(orphanRemoval = true)
+    private TranslateOrder translateOrder;
 }

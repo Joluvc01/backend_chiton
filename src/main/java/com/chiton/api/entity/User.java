@@ -37,6 +37,9 @@ public class User implements UserDetails {
     @NotNull
     private String lastname;
 
+    @NotNull
+    private Boolean status;
+
     @Enumerated(EnumType.STRING)
     Role role;
 

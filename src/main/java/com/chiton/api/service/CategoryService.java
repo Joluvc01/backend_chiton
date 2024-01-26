@@ -14,4 +14,6 @@ public interface CategoryService {
     public Optional<Category> findById(Long id);
 
     public Category save(Category category);
+
+    public void deleteById(Long id);
 }

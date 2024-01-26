@@ -24,12 +24,12 @@ public class ProductionOrderServiceImpl implements ProductionOrderService{
     }
 
     @Override
-    public List<ProductionOrder> findAllByCustomerName(String customer) {
-        return productionOrderRepository.findAllByCustomerName(customer);
+    public ProductionOrder save(ProductionOrder productionOrder) {
+        return productionOrderRepository.save(productionOrder);
     }
 
     @Override
-    public ProductionOrder save(ProductionOrder productionOrder) {
-        return productionOrderRepository.save(productionOrder);
+    public void deleteById(Long id) {
+        productionOrderRepository.deleteById(id);
     }
 }

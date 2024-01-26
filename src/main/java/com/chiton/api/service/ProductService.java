@@ -3,17 +3,21 @@ package com.chiton.api.service;
 import com.chiton.api.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 import java.util.Optional;
 
 public interface ProductService {
-    public Page<Product> findAll(Pageable pageable);
+    public List<Product> findAll();
 
     public Optional<Product> findById(Long id);
 
     Product findByNameAndColor(String name, String color);
     Product findByName(String name);
 
-    public Page<Product> findByCategoryName(String categoryName, Pageable pageable);
+    List<Product> findByCategoryName(String category);
 
     public Product save(Product product);
+
+    public void deleteById(Long id);
 }

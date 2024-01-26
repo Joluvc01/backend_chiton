@@ -24,6 +24,7 @@ public class ConvertDTO {
                 product.getName(),
                 product.getColor(),
                 product.getStock(),
+                product.getStatus(),
                 category
         );
     }
@@ -34,6 +35,7 @@ public class ConvertDTO {
                 user.getUsername(),
                 user.getFirstname(),
                 user.getLastname(),
+                user.getStatus(),
                 user.getRole().name()
         );
     }
@@ -47,6 +49,7 @@ public class ConvertDTO {
                 reference.getId(),
                 reference.getDescription(),
                 reference.getImage(),
+                reference.getStatus(),
                 details
         );
     }

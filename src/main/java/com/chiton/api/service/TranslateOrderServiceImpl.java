@@ -27,4 +27,9 @@ public class TranslateOrderServiceImpl implements TranslateOrderService{
     public TranslateOrder save(TranslateOrder translateOrder) {
         return translateOrderRepository.save(translateOrder);
     }
+
+    @Override
+    public void deleteById(Long id) {
+        translateOrderRepository.deleteById(id);
+    }
 }

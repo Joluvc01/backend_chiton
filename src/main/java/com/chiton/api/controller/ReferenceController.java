@@ -37,7 +37,8 @@ public class ReferenceController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id){
-        return referenceService.findById(id).map(ref -> ResponseEntity.ok(convertDTO.convertToReferenceDTO(ref)))
+        return referenceService.findById(id)
+                .map(ref -> ResponseEntity.ok(convertDTO.convertToReferenceDTO(ref)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -49,6 +50,7 @@ public class ReferenceController {
         Reference newReference = new Reference();
         newReference.setDescription(referenceDTO.getDescription());
         newReference.setImage(referenceDTO.getImage());
+        newReference.setStatus(true);
 
         // Mapa para realizar un seguimiento de los detalles del JSON por producto
         Map<String, ReferenceDetailDTO> productDetailsMap = new HashMap<>();
@@ -93,11 +95,11 @@ public class ReferenceController {
 
 
     @Transactional
-    @PutMapping("/update/{referenceId}")
-    public ResponseEntity<?> update(@PathVariable Long referenceId, @RequestBody ReferenceDTO updatedReferenceDTO) {
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ReferenceDTO updatedReferenceDTO) {
 
         // Buscar la referencia existente
-        Optional<Reference> optionalExistingReference = referenceService.findById(referenceId);
+        Optional<Reference> optionalExistingReference = referenceService.findById(id);
 
         // Verificar si la referencia existe
         if (optionalExistingReference.isEmpty()) {
@@ -110,6 +112,7 @@ public class ReferenceController {
         // Actualizar la referencia con los nuevos datos
         existingReference.setDescription(updatedReferenceDTO.getDescription());
         existingReference.setImage(updatedReferenceDTO.getImage());
+        existingReference.setStatus(updatedReferenceDTO.getStatus());
 
         // Mapa para realizar un seguimiento de los detalles del JSON por producto
         Map<String, ReferenceDetailDTO> productDetailsMap = new HashMap<>();
@@ -170,5 +173,37 @@ public class ReferenceController {
             }
         }
         return null;
+    }
+
+    @PatchMapping("/toggle-status/{id}")
+    public ResponseEntity<?> toggleStatus(@PathVariable Long id) {
+        Optional<Reference> optionalReference = referenceService.findById(id);
+
+        if (optionalReference.isPresent()) {
+            Reference existingReference = optionalReference.get();
+
+            // Cambiar el estado del usuario
+            existingReference.setStatus(!existingReference.getStatus()); // Invierte el estado actual
+            referenceService.save(existingReference);
+            String message = existingReference.getStatus() ? "Referencia activada" : "Referencia desactivada";
+            return ResponseEntity.ok().body(message);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Referencia no encontrada");
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteById(@PathVariable Long id){
+        Optional<Reference> optionalReference = referenceService.findById(id);
+
+        if(optionalReference.isPresent()){
+            Reference reference = optionalReference.get();
+            reference.getDetails().clear();
+            referenceService.deleteById(id);
+            return ResponseEntity.ok("Referencia eliminada");
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Referencia no encontrada");
+        }
     }
 }

@@ -10,7 +10,7 @@ public interface ProductionOrderService {
 
     public Optional<ProductionOrder> findById(Long id);
 
-    public List<ProductionOrder> findAllByCustomerName(String customer);
-
     public ProductionOrder save(ProductionOrder productionOrder);
+
+    public void deleteById(Long id);
 }

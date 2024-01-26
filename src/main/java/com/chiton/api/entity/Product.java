@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.lang.reflect.Type;
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -30,9 +33,22 @@ public class Product {
     @NotNull
     private Double stock;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @NotNull
+    private Boolean status;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private List<ReferenceDetail> referenceDetails;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private List<PurchaseDetail> purchaseDetails;
+
+
 
 }

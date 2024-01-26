@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,8 +17,8 @@ public class ProductServiceImpl implements ProductService{
     private ProductRepository productRepository;
 
     @Override
-    public Page<Product> findAll(Pageable pageable) {
-        return productRepository.findAll(pageable);
+    public List<Product> findAll() {
+        return productRepository.findAll();
     }
 
     @Override
@@ -30,17 +32,22 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
+    public List<Product> findByCategoryName(String category) {
+        return productRepository.findByCategoryName(category);
+    }
+
+    @Override
     public Optional<Product> findById(Long id) {
         return productRepository.findById(id);
     }
 
     @Override
-    public Page<Product> findByCategoryName(String categoryName, Pageable pageable) {
-        return productRepository.findByCategoryName(categoryName,pageable);
+    public Product save(Product product) {
+        return productRepository.save(product);
     }
 
     @Override
-    public Product save(Product product) {
-        return productRepository.save(product);
+    public void deleteById(Long id) {
+        productRepository.deleteById(id);
     }
 }

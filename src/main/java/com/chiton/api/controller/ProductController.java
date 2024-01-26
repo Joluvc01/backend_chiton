@@ -1,8 +1,7 @@
 package com.chiton.api.controller;
 
 import com.chiton.api.dto.ProductDTO;
-import com.chiton.api.entity.Category;
-import com.chiton.api.entity.Product;
+import com.chiton.api.entity.*;
 import com.chiton.api.service.CategoryService;
 import com.chiton.api.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/products")
@@ -25,25 +29,18 @@ public class ProductController {
     private ConvertDTO convertDTO;
 
     @GetMapping()
-    public ResponseEntity<Page<ProductDTO>> findByCategoryName(@RequestParam(required = false) String categoryName, Pageable pageable) {
-        Page<Product> productsPage;
-
-        if (categoryName != null && !categoryName.isEmpty()) {
-            productsPage = productService.findByCategoryName(categoryName, pageable);
-        } else {
-            productsPage = productService.findAll(pageable);
-        }
-
-        Page<ProductDTO> productDTOs = productsPage.map(convertDTO::convertToProductDTO);
-
-        return ResponseEntity.ok(productDTOs);
+    public ResponseEntity<?> findAll(){
+        List<Product> products = productService.findAll();
+        List<ProductDTO> productDTOS = products.stream()
+                .map(convertDTO::convertToProductDTO)
+                .toList();
+        return ResponseEntity.ok(productDTOS);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         return productService.findById(id)
-                .map(convertDTO::convertToProductDTO)
-                .map(ResponseEntity::ok)
+                .map(product ->ResponseEntity.ok(convertDTO.convertToProductDTO(product)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -61,6 +58,7 @@ public class ProductController {
             newProduct.setName(productDTO.getName());
             newProduct.setColor(productDTO.getColor());
             newProduct.setStock(productDTO.getStock());
+            newProduct.setStatus(true);
 
             Category category = categoryService.findByName(productDTO.getCategory());
 
@@ -75,9 +73,9 @@ public class ProductController {
         }
     }
 
-    @PutMapping("/update/{productId}")
-    public ResponseEntity<?> update(@PathVariable Long productId, @RequestBody ProductDTO productDTO) {
-        Optional<Product> optionalProduct = productService.findById(productId);
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
+        Optional<Product> optionalProduct = productService.findById(id);
 
         if (optionalProduct.isPresent()) {
             Product existingProduct = optionalProduct.get();
@@ -85,6 +83,7 @@ public class ProductController {
             existingProduct.setName(productDTO.getName());
             existingProduct.setColor(productDTO.getColor());
             existingProduct.setStock(productDTO.getStock());
+            existingProduct.setStatus(productDTO.getStatus());
 
             Category category = categoryService.findByName(productDTO.getCategory());
 
@@ -97,7 +96,58 @@ public class ProductController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Categoría no encontrada: " + productDTO.getCategory());
             }
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Producto no encontrado con ID: " + productId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Producto no encontrado");
+        }
+    }
+    @PatchMapping("/toggle-status/{id}")
+    public ResponseEntity<?> toggleStatus(@PathVariable Long id) {
+        Optional<Product> optionalProduct = productService.findById(id);
+
+        if (optionalProduct.isPresent()) {
+            Product existingProduct = optionalProduct.get();
+
+            // Cambiar el estado del producto
+            existingProduct.setStatus(!existingProduct.getStatus()); // Invierte el estado actual
+            productService.save(existingProduct);
+            String message = existingProduct.getStatus() ? "Producto activado" : "Producto desactivado";
+            return ResponseEntity.ok().body(message);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Producto no encontrado");
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteById(@PathVariable Long id) {
+        Optional<Product> optionalProduct = productService.findById(id);
+
+        if (optionalProduct.isPresent()) {
+            Product product = optionalProduct.get();
+
+            // Obtener los IDs de las referencias relacionadas
+            List<Long> referenceDetailIds = product.getReferenceDetails().stream()
+                    .map(referenceDetail -> referenceDetail.getReference().getId())
+                    .toList();
+
+            // Obtener los IDs de las órdenes de compra relacionadas
+            List<Long> purchaseDetailIds = product.getPurchaseDetails().stream()
+                    .map(purchaseDetail -> purchaseDetail.getPurchaseOrder().getId())
+                    .toList();
+
+            // Verificar si hay detalles de referencia o compra relacionados con este producto
+            if (!referenceDetailIds.isEmpty() || !purchaseDetailIds.isEmpty()) {
+                Map<String, List<Long>> relatedDetails = new HashMap<>();
+                relatedDetails.put("Referencias ID", referenceDetailIds);
+                relatedDetails.put("Ordenes de Compra ID", purchaseDetailIds);
+                return ResponseEntity.badRequest().body(relatedDetails);
+            }
+
+            // Si no hay detalles de referencia ni compra asociados, proceder con la eliminación
+            product.setCategory(null);
+            productService.save(product);
+            productService.deleteById(id);
+            return ResponseEntity.ok("Producto eliminado");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Producto no encontrado");
         }
     }
 }

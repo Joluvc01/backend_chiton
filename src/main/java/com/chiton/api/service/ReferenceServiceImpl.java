@@ -28,5 +28,10 @@ public class ReferenceServiceImpl implements ReferenceService{
     public Reference save(Reference reference) {
         return referenceRepository.save(reference);
     }
+
+    @Override
+    public void deleteById(Long id) {
+        referenceRepository.deleteById(id);
+    }
 }
 

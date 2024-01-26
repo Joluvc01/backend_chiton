@@ -2,6 +2,7 @@ package com.chiton.api.controller;
 
 import com.chiton.api.dto.RegisterDTO;
 import com.chiton.api.dto.UserDTO;
+import com.chiton.api.entity.Category;
 import com.chiton.api.entity.Role;
 import com.chiton.api.entity.User;
 import com.chiton.api.service.UserService;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -33,7 +33,7 @@ public class UserController {
         List<User> users = userService.findAll();
         List<UserDTO> userDTOs = users.stream()
                 .map(convertDTO::convertToUserDTO)
-                .collect(Collectors.toList());
+                .toList();
         return ResponseEntity.ok(userDTOs);
     }
 
@@ -57,15 +57,16 @@ public class UserController {
         newuser.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
         newuser.setFirstname(registerDTO.getFirstname());
         newuser.setLastname(registerDTO.getLastname());
+        newuser.setStatus(true);
         newuser.setRole(Role.valueOf(registerDTO.getRole()));
 
         User savedUser = userService.save(newuser);
         return ResponseEntity.status(HttpStatus.CREATED).body(convertDTO.convertToUserDTO(savedUser));
     }
 
-    @PutMapping("/update/{userId}")
-    public ResponseEntity<?> update(@PathVariable Long userId, @RequestBody RegisterDTO registerDTO) {
-        Optional<User> optionalUser = userService.findById(userId);
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody RegisterDTO registerDTO) {
+        Optional<User> optionalUser = userService.findById(id);
 
         if (optionalUser.isPresent()) {
             Optional<User> dupUser = userService.findByUsername(registerDTO.getUsername());
@@ -78,6 +79,7 @@ public class UserController {
                 existingUser.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
                 existingUser.setFirstname(registerDTO.getFirstname());
                 existingUser.setLastname(registerDTO.getLastname());
+                existingUser.setStatus(registerDTO.getStatus());
                 existingUser.setRole(Role.valueOf(registerDTO.getRole()));
 
                 User updatedUser = userService.save(existingUser);
@@ -86,6 +88,36 @@ public class UserController {
 
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+        }
+    }
+
+    @PatchMapping("/toggle-status/{id}")
+    public ResponseEntity<?> toggleStatus(@PathVariable Long id) {
+        Optional<User> optionalUser = userService.findById(id);
+
+        if (optionalUser.isPresent()) {
+            User existingUser = optionalUser.get();
+
+            // Cambiar el estado del usuario
+            existingUser.setStatus(!existingUser.getStatus()); // Invierte el estado actual
+            userService.save(existingUser);
+            String message = existingUser.getStatus() ? "Usuario activado" : "Usuario desactivado";
+            return ResponseEntity.ok().body(message);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteById(@PathVariable Long id){
+        Optional<User> optionalUser = userService.findById(id);
+
+        if(optionalUser.isPresent()){
+            userService.deleteById(id);
+            return ResponseEntity.ok("Usuario eliminado");
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrada");
         }
     }
 }

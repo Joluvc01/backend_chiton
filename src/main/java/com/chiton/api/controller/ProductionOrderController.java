@@ -43,7 +43,8 @@ public class ProductionOrderController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id){
-        return productionOrderService.findById(id).map(prod -> ResponseEntity.ok(convertDTO.convertToProductionOrderDTO(prod)))
+        return productionOrderService.findById(id)
+                .map(prod -> ResponseEntity.ok(convertDTO.convertToProductionOrderDTO(prod)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -106,11 +107,11 @@ public class ProductionOrderController {
     }
 
     @Transactional
-    @PutMapping("/update/{prodId}")
-    public ResponseEntity<?> update(@PathVariable Long prodId, @RequestBody ProductionOrderDTO updatedProdDTO){
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ProductionOrderDTO updatedProdDTO){
 
         //Buscar la orden de Produccion existente
-        Optional<ProductionOrder> optionalProductionOrder = productionOrderService.findById(prodId);
+        Optional<ProductionOrder> optionalProductionOrder = productionOrderService.findById(id);
 
         //Verificar si exise la orden de Produccion
         if(optionalProductionOrder.isEmpty()){
@@ -188,5 +189,22 @@ public class ProductionOrderController {
             }
         }
         return null;
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteById(@PathVariable Long id){
+        Optional<ProductionOrder> optionalProductionOrder = productionOrderService.findById(id);
+
+        if(optionalProductionOrder.isPresent()){
+            ProductionOrder productionOrder = optionalProductionOrder.get();
+
+            productionOrder.getDetails().clear();
+            productionOrder.setTranslateOrder(null);
+            productionOrderService.deleteById(id);
+            return ResponseEntity.ok("Orden de produccion eliminada");
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Orden de produccion no encontrado");
+        }
     }
 }

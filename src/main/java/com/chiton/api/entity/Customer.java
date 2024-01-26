@@ -38,6 +38,9 @@ public class Customer {
     @Email
     private String email;
 
+    @NotNull
+    private Boolean status;
+
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<ProductionOrder> productionOrder;
