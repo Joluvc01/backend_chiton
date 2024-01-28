@@ -80,6 +80,7 @@ public class ConvertDTO {
         return new PurchaseOrderDTO(
                 purchaseOrder.getId(),
                 purchaseOrder.getGenerationDate(),
+                purchaseOrder.getCompleted(),
                 details
         );
     }

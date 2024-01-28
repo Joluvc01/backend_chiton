@@ -5,8 +5,6 @@ import com.chiton.api.entity.*;
 import com.chiton.api.service.CategoryService;
 import com.chiton.api.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/products")
@@ -115,6 +112,18 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Producto no encontrado");
         }
     }
+
+    /*@PatchMapping("/add/{id}")
+    public ResponseEntity<?> addStock(@PathVariable Long id, @RequestBody StockDTO stockDTO){
+        Optional<Product> optionalProduct = productService.findById(id);
+
+        if (optionalProduct.isPresent()) {
+            Product existingProduct = optionalProduct.get();
+
+            //Aumentar Stock
+            existingProduct.setStock(existingProduct.getStock() + stockDTO.getQuantity());
+        }
+    } */
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id) {

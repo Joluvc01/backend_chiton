@@ -53,6 +53,7 @@ public class PurchaseOrderController {
         PurchaseOrder newpurchaseOrder = new PurchaseOrder();
         LocalDate date = LocalDate.now(ZoneId.of("America/Lima"));
         newpurchaseOrder.setGenerationDate(date);
+        newpurchaseOrder.setCompleted(false);
 
         // Mapa para realizar un seguimiento de los detalles del JSON por producto
         Map<String, PurchaseDetailDTO> productsDetailMap = new HashMap<>();
@@ -110,6 +111,7 @@ public class PurchaseOrderController {
 
         // Obtener la referencia del Optional
         PurchaseOrder existingPurchase = optionalExistingPurchase.get();
+        existingPurchase.setCompleted(false);
 
         // Mapa para realizar un seguimiento de los detalles del JSON por producto
         Map<String, PurchaseDetailDTO> productDetailsMap = new HashMap<>();
@@ -170,6 +172,42 @@ public class PurchaseOrderController {
             }
         }
         return null;
+    }
+
+    @PatchMapping("/completed/{id}")
+    public ResponseEntity<?> toggleStatus(@PathVariable Long id) {
+        Optional<PurchaseOrder> optionalPurchaseOrder = purchaseOrderService.findById(id);
+
+        if (optionalPurchaseOrder.isPresent()) {
+            PurchaseOrder existingPurchaseOrder = optionalPurchaseOrder.get();
+            if (existingPurchaseOrder.getCompleted()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esta orden de compra ya fue completada");
+            } else {
+                // Cambiar el estado de la orden de compra
+                existingPurchaseOrder.setCompleted(true);
+
+                // Recorrer la lista de detalles de la orden de compra
+                for (PurchaseDetail detail : existingPurchaseOrder.getDetails()) {
+                    // Obtener el producto y la cantidad comprada
+                    Product product = detail.getProduct();
+                    double purchasedQuantity = detail.getQuantity();
+
+                    // Actualizar el stock del producto
+                    double currentStock = product.getStock();
+                    product.setStock(currentStock + purchasedQuantity);
+
+                    // Guardar el producto actualizado en la base de datos
+                    productService.save(product);
+                }
+
+                // Guardar la orden de compra actualizada en la base de datos
+                purchaseOrderService.save(existingPurchaseOrder);
+
+                return ResponseEntity.ok().body("Orden de compra completa. Stock actualizado.");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Orden de compra no encontrada no encontrado");
+        }
     }
 
     @DeleteMapping("/delete/{id}")

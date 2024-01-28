@@ -14,5 +14,6 @@ public class PurchaseOrderDTO implements Serializable{
 
     final Long id;
     final LocalDate generationDate;
+    final Boolean status;
     final List<PurchaseDetailDTO> details;
 }
