@@ -49,7 +49,7 @@ public class ProductionOrderController {
     }
 
     @Transactional
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<?> create(@RequestBody ProductionOrderDTO productionOrderDTO) {
 
         // Verificar si el cliente existe
@@ -65,6 +65,7 @@ public class ProductionOrderController {
         LocalDate gendate = LocalDate.now(ZoneId.of("America/Lima"));
         newProductionOrder.setGenerationDate(gendate);
         newProductionOrder.setDeadline(productionOrderDTO.getDeadline());
+        newProductionOrder.setCompleted(false);
 
         // Mapa para realizar un seguimiento de los detalles del JSON por referencia
         Map<Long, ProductionDetailDTO> referenceDetailsMap = new HashMap<>();
@@ -107,7 +108,7 @@ public class ProductionOrderController {
     }
 
     @Transactional
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ProductionOrderDTO updatedProdDTO){
 
         //Buscar la orden de Produccion existente
@@ -130,6 +131,7 @@ public class ProductionOrderController {
         //Actualizar la orden de produccion con los nuevos datos
         existingprodOrder.setCustomer(customer);
         existingprodOrder.setDeadline(updatedProdDTO.getDeadline());
+        existingprodOrder.setCompleted(false);
 
         // Mapa para realizar un seguimiento de los detalles del JSON por referencia
         Map<Long, ProductionDetailDTO> referenceDetailsMap = new HashMap<>();
@@ -192,7 +194,7 @@ public class ProductionOrderController {
     }
 
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id){
         Optional<ProductionOrder> optionalProductionOrder = productionOrderService.findById(id);
 

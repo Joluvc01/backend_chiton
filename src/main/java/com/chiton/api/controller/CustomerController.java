@@ -34,7 +34,7 @@ public class CustomerController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<?> create(@RequestBody Customer customer) {
         Customer existingCustomer = customerService.findByName(customer.getName());
         if (existingCustomer != null) {
@@ -45,7 +45,7 @@ public class CustomerController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newcustomer);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Customer customer) {
         Optional<Customer> optionalCustomer = customerService.findById(id);
         if (optionalCustomer.isPresent()) {
@@ -79,7 +79,7 @@ public class CustomerController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id){
         Optional<Customer> optionalCustomer = customerService.findById(id);
 

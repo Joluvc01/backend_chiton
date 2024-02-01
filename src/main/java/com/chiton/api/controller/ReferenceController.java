@@ -43,7 +43,7 @@ public class ReferenceController {
     }
 
     @Transactional
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<?> create(@RequestBody ReferenceDTO referenceDTO) {
 
         // Crear la nueva referencia
@@ -95,7 +95,7 @@ public class ReferenceController {
 
 
     @Transactional
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ReferenceDTO updatedReferenceDTO) {
 
         // Buscar la referencia existente
@@ -192,7 +192,7 @@ public class ReferenceController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id){
         Optional<Reference> optionalReference = referenceService.findById(id);
 

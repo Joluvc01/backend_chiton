@@ -114,6 +114,7 @@ public class ConvertDTO {
                 customer,
                 productionOrder.getGenerationDate(),
                 productionOrder.getDeadline(),
+                productionOrder.getCompleted(),
                 details
         );
     }
@@ -142,7 +143,8 @@ public class ConvertDTO {
         return new TranslateOrderDTO(
                 translateOrder.getId(),
                 prodId,
-                translateOrder.getGenerationDate()
+                translateOrder.getGenerationDate(),
+                translateOrder.getCompleted()
         );
     }
 }

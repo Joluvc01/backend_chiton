@@ -1,6 +1,7 @@
 package com.chiton.api.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -28,6 +29,9 @@ public class ProductionOrder {
 
     @Column(name = "deadline", nullable = false)
     private LocalDate deadline;
+
+    @NotNull
+    private Boolean completed;
 
     @OneToMany(mappedBy = "productionOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductionDetail> details;

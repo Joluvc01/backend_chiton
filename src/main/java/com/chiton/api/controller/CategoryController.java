@@ -36,7 +36,7 @@ public class CategoryController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<?> create(@RequestBody Category category) {
         Category existingCategory = categoryService.findByName(category.getName());
         if (existingCategory != null) {
@@ -47,7 +47,7 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newCategory);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Category category) {
         Optional<Category> optionalCategory = categoryService.findById(id);
         if (optionalCategory.isPresent()) {
@@ -80,7 +80,7 @@ public class CategoryController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id) {
         Optional<Category> optionalCategory = categoryService.findById(id);
 

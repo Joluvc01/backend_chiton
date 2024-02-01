@@ -44,7 +44,7 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<?> create(@RequestBody RegisterDTO registerDTO) {
         Optional<User> existingUser = userService.findByUsername(registerDTO.getUsername());
 
@@ -64,7 +64,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(convertDTO.convertToUserDTO(savedUser));
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody RegisterDTO registerDTO) {
         Optional<User> optionalUser = userService.findById(id);
 
@@ -108,7 +108,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id){
         Optional<User> optionalUser = userService.findById(id);
 

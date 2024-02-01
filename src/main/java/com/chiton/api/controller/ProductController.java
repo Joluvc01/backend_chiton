@@ -41,7 +41,7 @@ public class ProductController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<?> create(@RequestBody ProductDTO productDTO) {
         Product existingProduct = productService.findByNameAndColor(productDTO.getName(), productDTO.getColor());
 
@@ -70,7 +70,7 @@ public class ProductController {
         }
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
         Optional<Product> optionalProduct = productService.findById(id);
 
@@ -125,7 +125,7 @@ public class ProductController {
         }
     } */
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id) {
         Optional<Product> optionalProduct = productService.findById(id);
 

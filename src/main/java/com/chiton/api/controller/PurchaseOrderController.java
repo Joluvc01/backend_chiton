@@ -46,7 +46,7 @@ public class PurchaseOrderController {
     }
 
     @Transactional
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<?> create(@RequestBody PurchaseOrderDTO purchaseOrderDTO){
 
         //Crear nueva orden de Compra
@@ -98,7 +98,7 @@ public class PurchaseOrderController {
     }
 
     @Transactional
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long purchaseId, @RequestBody PurchaseOrderDTO updatedpurchaseOrderDTO){
 
         // Buscar la orden de compra existente
@@ -210,7 +210,7 @@ public class PurchaseOrderController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id){
         Optional<PurchaseOrder> optionalPurchaseOrder = purchaseOrderService.findById(id);
 

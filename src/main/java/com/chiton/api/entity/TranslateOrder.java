@@ -1,6 +1,7 @@
 package com.chiton.api.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -27,5 +28,8 @@ public class TranslateOrder {
     @Column(name = "generation_date", updatable = false)
     @CreatedDate
     private LocalDate generationDate;
+
+    @NotNull
+    private Boolean completed;
 
 }

@@ -14,4 +14,5 @@ public class TranslateOrderDTO implements Serializable {
     final Long id;
     final Long productionOrder;
     final LocalDate generationDate;
+    final Boolean completed;
 }

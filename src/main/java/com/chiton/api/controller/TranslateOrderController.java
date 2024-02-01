@@ -3,6 +3,7 @@ package com.chiton.api.controller;
 import com.chiton.api.dto.TranslateOrderDTO;
 import com.chiton.api.entity.Product;
 import com.chiton.api.entity.ProductionOrder;
+import com.chiton.api.entity.PurchaseDetail;
 import com.chiton.api.entity.TranslateOrder;
 import com.chiton.api.service.ProductionOrderService;
 import com.chiton.api.service.TranslateOrderService;
@@ -47,7 +48,7 @@ public class TranslateOrderController {
     }
 
     @Transactional
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<?> create(@RequestBody TranslateOrderDTO translateOrderDTO){
         //Crear nueva orden de traslado
         TranslateOrder translateOrder = new TranslateOrder();
@@ -66,6 +67,7 @@ public class TranslateOrderController {
         translateOrder.setProductionOrder(existingprodOrder);
         LocalDate gendate = LocalDate.now(ZoneId.of("America/Lima"));
         translateOrder.setGenerationDate(gendate);
+        translateOrder.setCompleted(false);
         translateOrder = translateOrderService.save(translateOrder);
 
         return ResponseEntity
@@ -74,7 +76,7 @@ public class TranslateOrderController {
     }
 
     @Transactional
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id,@RequestBody TranslateOrderDTO updatedTranslateOrderDTO){
 
         //Buscar la orden de traslado
@@ -99,12 +101,41 @@ public class TranslateOrderController {
         ProductionOrder existingprodOrder = optionalProductionOrder.get();
 
         translateOrder.setProductionOrder(existingprodOrder);
+        translateOrder.setCompleted(false);
         translateOrder = translateOrderService.save(translateOrder);
 
         return ResponseEntity.ok(convertDTO.convertToTranslateOrderDTO(translateOrder));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @PatchMapping("/completed/{id}")
+    public ResponseEntity<?> toggleStatus(@PathVariable Long id){
+        Optional<TranslateOrder> optionalTranslateOrder = translateOrderService.findById(id);
+
+        if(optionalTranslateOrder.isPresent()){
+            TranslateOrder existingTranslateOrder = optionalTranslateOrder.get();
+            Long translateId = existingTranslateOrder.getId();
+            if (existingTranslateOrder.getCompleted()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esta traslado ya fue completado");
+            } else {
+                Optional<ProductionOrder> productionOrder = productionOrderService.findById(translateId);
+                if(productionOrder.isPresent()){
+                    ProductionOrder prod = productionOrder.get();
+                    prod.setCompleted(true);
+                    existingTranslateOrder.setCompleted(true);
+                    productionOrderService.save(prod);
+                    translateOrderService.save(existingTranslateOrder);
+                    return ResponseEntity.status(HttpStatus.OK).body("Traslado y Orden Produccion Asociada completos");
+                }
+                else{
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Orden de Produccion no encontrada");
+                }
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Orden de compra no encontrada no encontrado");
+        }
+    }
+
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id){
         Optional<TranslateOrder> optionalTranslateOrder = translateOrderService.findById(id);
 
