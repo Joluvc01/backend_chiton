@@ -175,22 +175,6 @@ public class ReferenceController {
         return null;
     }
 
-    @PatchMapping("/toggle-status/{id}")
-    public ResponseEntity<?> toggleStatus(@PathVariable Long id) {
-        Optional<Reference> optionalReference = referenceService.findById(id);
-
-        if (optionalReference.isPresent()) {
-            Reference existingReference = optionalReference.get();
-
-            // Cambiar el estado del usuario
-            existingReference.setStatus(!existingReference.getStatus()); // Invierte el estado actual
-            referenceService.save(existingReference);
-            String message = existingReference.getStatus() ? "Referencia activada" : "Referencia desactivada";
-            return ResponseEntity.ok().body(message);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Referencia no encontrada");
-        }
-    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id){

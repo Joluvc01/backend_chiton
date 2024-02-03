@@ -69,44 +69,21 @@ public class UserController {
         Optional<User> optionalUser = userService.findById(id);
 
         if (optionalUser.isPresent()) {
-            Optional<User> dupUser = userService.findByUsername(registerDTO.getUsername());
-
-            if (dupUser.isPresent()) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("El nombre de usuario ya está en uso");
-            } else {
-                User existingUser = optionalUser.get();
-                existingUser.setUsername(registerDTO.getUsername());
-                existingUser.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
-                existingUser.setFirstname(registerDTO.getFirstname());
-                existingUser.setLastname(registerDTO.getLastname());
-                existingUser.setStatus(registerDTO.getStatus());
-                existingUser.setRole(Role.valueOf(registerDTO.getRole()));
-
-                User updatedUser = userService.save(existingUser);
-                return ResponseEntity.ok(convertDTO.convertToUserDTO(updatedUser));
-            }
-
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
-        }
-    }
-
-    @PatchMapping("/toggle-status/{id}")
-    public ResponseEntity<?> toggleStatus(@PathVariable Long id) {
-        Optional<User> optionalUser = userService.findById(id);
-
-        if (optionalUser.isPresent()) {
             User existingUser = optionalUser.get();
+            existingUser.setUsername(registerDTO.getUsername());
+            existingUser.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
+            existingUser.setFirstname(registerDTO.getFirstname());
+            existingUser.setLastname(registerDTO.getLastname());
+            existingUser.setStatus(registerDTO.getStatus());
+            existingUser.setRole(Role.valueOf(registerDTO.getRole()));
 
-            // Cambiar el estado del usuario
-            existingUser.setStatus(!existingUser.getStatus()); // Invierte el estado actual
-            userService.save(existingUser);
-            String message = existingUser.getStatus() ? "Usuario activado" : "Usuario desactivado";
-            return ResponseEntity.ok().body(message);
+            User updatedUser = userService.save(existingUser);
+            return ResponseEntity.ok(convertDTO.convertToUserDTO(updatedUser));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
         }
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id){

@@ -96,34 +96,6 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Producto no encontrado");
         }
     }
-    @PatchMapping("/toggle-status/{id}")
-    public ResponseEntity<?> toggleStatus(@PathVariable Long id) {
-        Optional<Product> optionalProduct = productService.findById(id);
-
-        if (optionalProduct.isPresent()) {
-            Product existingProduct = optionalProduct.get();
-
-            // Cambiar el estado del producto
-            existingProduct.setStatus(!existingProduct.getStatus()); // Invierte el estado actual
-            productService.save(existingProduct);
-            String message = existingProduct.getStatus() ? "Producto activado" : "Producto desactivado";
-            return ResponseEntity.ok().body(message);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Producto no encontrado");
-        }
-    }
-
-    /*@PatchMapping("/add/{id}")
-    public ResponseEntity<?> addStock(@PathVariable Long id, @RequestBody StockDTO stockDTO){
-        Optional<Product> optionalProduct = productService.findById(id);
-
-        if (optionalProduct.isPresent()) {
-            Product existingProduct = optionalProduct.get();
-
-            //Aumentar Stock
-            existingProduct.setStock(existingProduct.getStock() + stockDTO.getQuantity());
-        }
-    } */
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id) {

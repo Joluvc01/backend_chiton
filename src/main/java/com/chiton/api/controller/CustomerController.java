@@ -49,31 +49,9 @@ public class CustomerController {
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Customer customer) {
         Optional<Customer> optionalCustomer = customerService.findById(id);
         if (optionalCustomer.isPresent()) {
-            Customer existingCustomer = customerService.findByName(customer.getName());
-            if (existingCustomer != null) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("El cliente ya existe");
-            } else {
-                customer.setStatus(customer.getStatus());
-                customerService.save(customer);
-                return ResponseEntity.status(HttpStatus.OK).body(customer);
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente no encontrado");
-        }
-    }
-
-    @PatchMapping("/toggle-status/{id}")
-    public ResponseEntity<?> toggleStatus(@PathVariable Long id) {
-        Optional<Customer> optionalCustomer = customerService.findById(id);
-
-        if (optionalCustomer.isPresent()) {
-            Customer existingCustomer = optionalCustomer.get();
-
-            // Cambiar el estado del usuario
-            existingCustomer.setStatus(!existingCustomer.getStatus()); // Invierte el estado actual
-            customerService.save(existingCustomer);
-            String message = existingCustomer.getStatus() ? "Cliente activado" : "Cliente desactivado";
-            return ResponseEntity.ok().body(message);
+            customer.setStatus(customer.getStatus());
+            customerService.save(customer);
+            return ResponseEntity.status(HttpStatus.OK).body(customer);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente no encontrado");
         }

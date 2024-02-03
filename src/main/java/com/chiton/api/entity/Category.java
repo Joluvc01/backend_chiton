@@ -24,6 +24,6 @@ public class Category {
     private String name;
 
     @NotNull
-    private Boolean status;
+    private String status;
 
 }
