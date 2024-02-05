@@ -30,6 +30,6 @@ public class TranslateOrder {
     private LocalDate generationDate;
 
     @NotNull
-    private Boolean completed;
+    private String status;
 
 }

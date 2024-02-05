@@ -1,8 +1,8 @@
 package com.chiton.api.controller;
 
+import com.chiton.api.dto.CustomerDTO;
 import com.chiton.api.entity.Customer;
 import com.chiton.api.entity.ProductionOrder;
-import com.chiton.api.entity.User;
 import com.chiton.api.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/customers")
@@ -22,36 +21,74 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
+    @Autowired
+    private ConvertDTO convertDTO;
+
     @GetMapping()
     public ResponseEntity<?> findALL(){
-        return ResponseEntity.ok(customerService.findAll());
+        List<Customer> customers = customerService.findAll();
+        List<CustomerDTO> customerDTOS = customers.stream()
+                .map(convertDTO::convertToCustomerDTO)
+                .toList();
+        return ResponseEntity.ok(customerDTOS);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         return customerService.findById(id)
-                .map(ResponseEntity::ok)
+                .map(customer -> ResponseEntity.ok(convertDTO.convertToCustomerDTO(customer)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping()
-    public ResponseEntity<?> create(@RequestBody Customer customer) {
-        Customer existingCustomer = customerService.findByName(customer.getName());
+    public ResponseEntity<?> create(@RequestBody CustomerDTO customerDTO) {
+        Customer existingCustomer = customerService.findByName(customerDTO.getName());
         if (existingCustomer != null) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("El cliente ya existe");
         }
-        customer.setStatus(true);
-        Customer newcustomer = customerService.save(customer);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newcustomer);
+        Customer newcustomer = new Customer();
+        newcustomer.setName(customerDTO.getName());
+        newcustomer.setRuc(customerDTO.getRuc());
+        newcustomer.setContactNumber(customerDTO.getContactNumber());
+        newcustomer.setEmail(customerDTO.getEmail());
+        newcustomer.setStatus("Activado");
+        customerService.save(newcustomer);
+        CustomerDTO newCustomerDTO = convertDTO.convertToCustomerDTO(newcustomer);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newCustomerDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Customer customer) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) {
         Optional<Customer> optionalCustomer = customerService.findById(id);
         if (optionalCustomer.isPresent()) {
-            customer.setStatus(customer.getStatus());
-            customerService.save(customer);
-            return ResponseEntity.status(HttpStatus.OK).body(customer);
+            Customer existingCustomer = optionalCustomer.get();
+            existingCustomer.setName(customerDTO.getName());
+            existingCustomer.setRuc(customerDTO.getRuc());
+            existingCustomer.setContactNumber(customerDTO.getContactNumber());
+            existingCustomer.setEmail(customerDTO.getEmail());
+            Customer updatedCustomer = customerService.save(existingCustomer);
+            CustomerDTO updatedCustomerDTO = convertDTO.convertToCustomerDTO(updatedCustomer);
+            return ResponseEntity.ok(updatedCustomerDTO);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente no encontrado");
+        }
+    }
+
+    @PostMapping("/status/{id}")
+    public ResponseEntity<?> toggleStatus(@PathVariable Long id) {
+        Optional<Customer> optionalCustomer = customerService.findById(id);
+
+        if (optionalCustomer.isPresent()) {
+            Customer existingCustomer = optionalCustomer.get();
+
+            // Cambiar el estado de la categoría
+            String currentStatus = existingCustomer.getStatus();
+            String newStatus = currentStatus.equals("Activado") ? "Desactivado" : "Activado";
+            existingCustomer.setStatus(newStatus);
+
+            customerService.save(existingCustomer);
+            String message = newStatus.equals("Activado") ? "Cliente activado" : "Cliente desactivado";
+            return ResponseEntity.ok().body(message);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente no encontrado");
         }
@@ -72,7 +109,7 @@ public class CustomerController {
             //Verificar si hay ordenes de produccion realcionados a este cliente
             if (!prodOrderIds.isEmpty()){
                 Map<String, List<Long>> relatedProd = new HashMap<>();
-                relatedProd.put("Ordenes de Produccion ID", prodOrderIds);
+                relatedProd.put("ID de Ordenes de Produccion asociadas:", prodOrderIds);
                 return ResponseEntity.badRequest().body(relatedProd);
             }
 

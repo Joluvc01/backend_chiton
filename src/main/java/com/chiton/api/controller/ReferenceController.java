@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Ref;
 import java.util.*;
 
 @RestController
@@ -50,7 +51,7 @@ public class ReferenceController {
         Reference newReference = new Reference();
         newReference.setDescription(referenceDTO.getDescription());
         newReference.setImage(referenceDTO.getImage());
-        newReference.setStatus(true);
+        newReference.setStatus("Activado");
 
         // Mapa para realizar un seguimiento de los detalles del JSON por producto
         Map<String, ReferenceDetailDTO> productDetailsMap = new HashMap<>();
@@ -173,6 +174,26 @@ public class ReferenceController {
             }
         }
         return null;
+    }
+
+    @PostMapping("/status/{id}")
+    public ResponseEntity<?> toggleStatus(@PathVariable Long id) {
+        Optional<Reference> optionalReference = referenceService.findById(id);
+
+        if (optionalReference.isPresent()) {
+            Reference existingReference = optionalReference.get();
+
+            // Cambiar el estado de la categoría
+            String currentStatus = existingReference.getStatus();
+            String newStatus = currentStatus.equals("Activado") ? "Desactivado" : "Activado";
+            existingReference.setStatus(newStatus);
+
+            referenceService.save(existingReference);
+            String message = newStatus.equals("Activado") ? "Referencia activada" : "Referencia desactivada";
+            return ResponseEntity.ok().body(message);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Referencia no encontrada");
+        }
     }
 
 

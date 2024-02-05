@@ -24,7 +24,7 @@ public class PurchaseOrder {
     private LocalDate generationDate;
 
     @NotNull
-    private Boolean completed;
+    private String status;
 
     @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PurchaseDetail> details;

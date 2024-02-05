@@ -14,6 +14,6 @@ public class RegisterDTO implements Serializable {
     final String password;
     final String firstname;
     final String lastname;
-    final Boolean status;
+    final String status;
     final String role;
 }

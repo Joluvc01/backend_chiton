@@ -31,7 +31,7 @@ public class ProductionOrder {
     private LocalDate deadline;
 
     @NotNull
-    private Boolean completed;
+    private String status;
 
     @OneToMany(mappedBy = "productionOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductionDetail> details;

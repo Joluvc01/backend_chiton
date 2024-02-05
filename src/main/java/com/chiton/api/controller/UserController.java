@@ -57,7 +57,7 @@ public class UserController {
         newuser.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
         newuser.setFirstname(registerDTO.getFirstname());
         newuser.setLastname(registerDTO.getLastname());
-        newuser.setStatus(true);
+        newuser.setStatus("Activado");
         newuser.setRole(Role.valueOf(registerDTO.getRole()));
 
         User savedUser = userService.save(newuser);
@@ -74,11 +74,30 @@ public class UserController {
             existingUser.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
             existingUser.setFirstname(registerDTO.getFirstname());
             existingUser.setLastname(registerDTO.getLastname());
-            existingUser.setStatus(registerDTO.getStatus());
             existingUser.setRole(Role.valueOf(registerDTO.getRole()));
 
             User updatedUser = userService.save(existingUser);
             return ResponseEntity.ok(convertDTO.convertToUserDTO(updatedUser));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+        }
+    }
+
+    @PostMapping("/status/{id}")
+    public ResponseEntity<?> toggleStatus(@PathVariable Long id) {
+        Optional<User> optionalUser = userService.findById(id);
+
+        if (optionalUser.isPresent()) {
+            User existingUser = optionalUser.get();
+
+            // Cambiar el estado de la categoría
+            String currentStatus = existingUser.getStatus();
+            String newStatus = currentStatus.equals("Activado") ? "Desactivado" : "Activado";
+            existingUser.setStatus(newStatus);
+
+            userService.save(existingUser);
+            String message = newStatus.equals("Activado") ? "Usuario activado" : "Usuario desactivado";
+            return ResponseEntity.ok().body(message);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
         }

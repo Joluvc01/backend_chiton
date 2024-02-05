@@ -39,7 +39,7 @@ public class Customer {
     private String email;
 
     @NotNull
-    private Boolean status;
+    private String status;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

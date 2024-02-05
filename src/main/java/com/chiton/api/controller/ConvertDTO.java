@@ -17,6 +17,25 @@ public class ConvertDTO {
     @Autowired
     private ReferenceService referenceService;
 
+    public CategoryDTO convertToCategoryDTO(Category category){
+        return new CategoryDTO(
+                category.getId(),
+                category.getName(),
+                category.getStatus()
+        );
+    }
+
+    public CustomerDTO convertToCustomerDTO(Customer customer){
+        return new CustomerDTO(
+                customer.getId(),
+                customer.getName(),
+                customer.getRuc(),
+                customer.getContactNumber(),
+                customer.getEmail(),
+                customer.getStatus()
+        );
+    }
+
     public ProductDTO convertToProductDTO(Product product) {
         String category = (product.getName() != null) ? product.getCategory().getName() : null;
         return new ProductDTO(
@@ -80,7 +99,7 @@ public class ConvertDTO {
         return new PurchaseOrderDTO(
                 purchaseOrder.getId(),
                 purchaseOrder.getGenerationDate(),
-                purchaseOrder.getCompleted(),
+                purchaseOrder.getStatus(),
                 details
         );
     }
@@ -114,7 +133,7 @@ public class ConvertDTO {
                 customer,
                 productionOrder.getGenerationDate(),
                 productionOrder.getDeadline(),
-                productionOrder.getCompleted(),
+                productionOrder.getStatus(),
                 details
         );
     }
@@ -144,7 +163,7 @@ public class ConvertDTO {
                 translateOrder.getId(),
                 prodId,
                 translateOrder.getGenerationDate(),
-                translateOrder.getCompleted()
+                translateOrder.getStatus()
         );
     }
 }

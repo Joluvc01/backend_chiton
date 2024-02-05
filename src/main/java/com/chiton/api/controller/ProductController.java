@@ -55,7 +55,7 @@ public class ProductController {
             newProduct.setName(productDTO.getName());
             newProduct.setColor(productDTO.getColor());
             newProduct.setStock(productDTO.getStock());
-            newProduct.setStatus(true);
+            newProduct.setStatus("Activado");
 
             Category category = categoryService.findByName(productDTO.getCategory());
 
@@ -80,7 +80,6 @@ public class ProductController {
             existingProduct.setName(productDTO.getName());
             existingProduct.setColor(productDTO.getColor());
             existingProduct.setStock(productDTO.getStock());
-            existingProduct.setStatus(productDTO.getStatus());
 
             Category category = categoryService.findByName(productDTO.getCategory());
 
@@ -92,6 +91,26 @@ public class ProductController {
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Categoría no encontrada: " + productDTO.getCategory());
             }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Producto no encontrado");
+        }
+    }
+
+    @PostMapping("/status/{id}")
+    public ResponseEntity<?> toggleStatus(@PathVariable Long id) {
+        Optional<Product> optionalProduct = productService.findById(id);
+
+        if (optionalProduct.isPresent()) {
+            Product existingProduct = optionalProduct.get();
+
+            // Cambiar el estado de la categoría
+            String currentStatus = existingProduct.getStatus();
+            String newStatus = currentStatus.equals("Activado") ? "Desactivado" : "Activado";
+            existingProduct.setStatus(newStatus);
+
+            productService.save(existingProduct);
+            String message = newStatus.equals("Activado") ? "Producto activado" : "Producto desactivado";
+            return ResponseEntity.ok().body(message);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Producto no encontrado");
         }
@@ -117,8 +136,8 @@ public class ProductController {
             // Verificar si hay detalles de referencia o compra relacionados con este producto
             if (!referenceDetailIds.isEmpty() || !purchaseDetailIds.isEmpty()) {
                 Map<String, List<Long>> relatedDetails = new HashMap<>();
-                relatedDetails.put("Referencias ID", referenceDetailIds);
-                relatedDetails.put("Ordenes de Compra ID", purchaseDetailIds);
+                relatedDetails.put("ID de Referencias asociadas", referenceDetailIds);
+                relatedDetails.put("ID de Ordenes de Compra asociadas", purchaseDetailIds);
                 return ResponseEntity.badRequest().body(relatedDetails);
             }
 

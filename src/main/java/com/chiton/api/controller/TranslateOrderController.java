@@ -67,7 +67,7 @@ public class TranslateOrderController {
         translateOrder.setProductionOrder(existingprodOrder);
         LocalDate gendate = LocalDate.now(ZoneId.of("America/Lima"));
         translateOrder.setGenerationDate(gendate);
-        translateOrder.setCompleted(false);
+        translateOrder.setStatus("Incompleto");
         translateOrder = translateOrderService.save(translateOrder);
 
         return ResponseEntity
@@ -101,30 +101,29 @@ public class TranslateOrderController {
         ProductionOrder existingprodOrder = optionalProductionOrder.get();
 
         translateOrder.setProductionOrder(existingprodOrder);
-        translateOrder.setCompleted(false);
         translateOrder = translateOrderService.save(translateOrder);
 
         return ResponseEntity.ok(convertDTO.convertToTranslateOrderDTO(translateOrder));
     }
 
-    @PatchMapping("/completed/{id}")
+    @PostMapping("/status/{id}")
     public ResponseEntity<?> toggleStatus(@PathVariable Long id){
         Optional<TranslateOrder> optionalTranslateOrder = translateOrderService.findById(id);
 
         if(optionalTranslateOrder.isPresent()){
             TranslateOrder existingTranslateOrder = optionalTranslateOrder.get();
             Long translateId = existingTranslateOrder.getId();
-            if (existingTranslateOrder.getCompleted()){
+            if (existingTranslateOrder.getStatus().equals("Completo")){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esta traslado ya fue completado");
             } else {
                 Optional<ProductionOrder> productionOrder = productionOrderService.findById(translateId);
                 if(productionOrder.isPresent()){
                     ProductionOrder prod = productionOrder.get();
-                    prod.setCompleted(true);
-                    existingTranslateOrder.setCompleted(true);
+                    prod.setStatus("Completo");
+                    existingTranslateOrder.setStatus("Completo");
                     productionOrderService.save(prod);
                     translateOrderService.save(existingTranslateOrder);
-                    return ResponseEntity.status(HttpStatus.OK).body("Traslado y Orden Produccion Asociada completos");
+                    return ResponseEntity.status(HttpStatus.OK).body("Orden Traslado y Orden de Produccion Asociada completas");
                 }
                 else{
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Orden de Produccion no encontrada");

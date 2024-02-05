@@ -16,6 +16,6 @@ public class ProductionOrderDTO implements Serializable {
     final String customer;
     final LocalDate generationDate;
     final LocalDate deadline;
-    final Boolean completed;
+    final String status;
     final List<ProductionDetailDTO> details;
 }

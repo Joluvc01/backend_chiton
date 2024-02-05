@@ -6,6 +6,7 @@ import com.chiton.api.entity.*;
 import com.chiton.api.service.CustomerService;
 import com.chiton.api.service.ProductionOrderService;
 import com.chiton.api.service.ReferenceService;
+import com.chiton.api.service.TranslateOrderService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,9 @@ public class ProductionOrderController {
 
     @Autowired
     private ProductionOrderService productionOrderService;
+
+    @Autowired
+    private TranslateOrderService translateOrderService;
 
     @Autowired
     private CustomerService customerService;
@@ -65,7 +69,7 @@ public class ProductionOrderController {
         LocalDate gendate = LocalDate.now(ZoneId.of("America/Lima"));
         newProductionOrder.setGenerationDate(gendate);
         newProductionOrder.setDeadline(productionOrderDTO.getDeadline());
-        newProductionOrder.setCompleted(false);
+        newProductionOrder.setStatus("Incompleto");
 
         // Mapa para realizar un seguimiento de los detalles del JSON por referencia
         Map<Long, ProductionDetailDTO> referenceDetailsMap = new HashMap<>();
@@ -131,7 +135,6 @@ public class ProductionOrderController {
         //Actualizar la orden de produccion con los nuevos datos
         existingprodOrder.setCustomer(customer);
         existingprodOrder.setDeadline(updatedProdDTO.getDeadline());
-        existingprodOrder.setCompleted(false);
 
         // Mapa para realizar un seguimiento de los detalles del JSON por referencia
         Map<Long, ProductionDetailDTO> referenceDetailsMap = new HashMap<>();
@@ -202,7 +205,9 @@ public class ProductionOrderController {
             ProductionOrder productionOrder = optionalProductionOrder.get();
 
             productionOrder.getDetails().clear();
+            Long traslateId = productionOrder.getTranslateOrder().getId();
             productionOrder.setTranslateOrder(null);
+            translateOrderService.deleteById(traslateId);
             productionOrderService.deleteById(id);
             return ResponseEntity.ok("Orden de produccion eliminada");
         }

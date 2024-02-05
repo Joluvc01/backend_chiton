@@ -26,7 +26,7 @@ public class Reference {
     private String image;
 
     @NotNull
-    private Boolean status;
+    private String status;
 
     @OneToMany(mappedBy = "reference", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReferenceDetail> details;

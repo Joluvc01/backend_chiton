@@ -34,7 +34,7 @@ public class Product {
     private Double stock;
 
     @NotNull
-    private Boolean status;
+    private String status;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
