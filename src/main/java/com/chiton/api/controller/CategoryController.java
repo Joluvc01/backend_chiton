@@ -57,6 +57,7 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newCategoryDTO);
     }
 
+
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CategoryDTO categoryDTO) {
         Optional<Category> optionalCategory = categoryService.findById(id);
@@ -112,4 +113,12 @@ public class CategoryController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Categoría no encontrada");
         }
     }
+
+    @GetMapping("/exist/{name}")
+    public ResponseEntity<Boolean> checkCategoryExists(@PathVariable String name) {
+        Category cat = categoryService.findByName(name);
+        boolean exists = cat != null;
+        return ResponseEntity.ok(exists);
+    }
+
 }

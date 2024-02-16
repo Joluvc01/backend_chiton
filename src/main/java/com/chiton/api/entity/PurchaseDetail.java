@@ -24,7 +24,7 @@ public class PurchaseDetail {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @JoinColumn(name = "detail")
+    @JoinColumn(name = "purchase_id")
     private PurchaseOrder purchaseOrder;
 
     @NotNull

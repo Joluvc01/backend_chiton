@@ -19,7 +19,6 @@ public class Category {
     private Long id;
 
     @NotNull
-    @Size(min = 1, max = 20)
     @Column(unique = true)
     private String name;
 

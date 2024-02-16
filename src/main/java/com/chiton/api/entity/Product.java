@@ -23,11 +23,9 @@ public class Product {
     private Long id;
 
     @NotNull
-    @Size(min = 1, max = 50)
     private String name;
 
     @NotNull
-    @Size(min = 1, max = 30)
     private String color;
 
     @NotNull

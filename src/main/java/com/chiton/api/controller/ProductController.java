@@ -116,6 +116,26 @@ public class ProductController {
         }
     }
 
+    @PutMapping("/add/{id}/{stock}")
+    public ResponseEntity<?> addStock(@PathVariable Long id, @PathVariable Double stock) {
+        if (stock <= 0) {
+            return ResponseEntity.badRequest().body("La cantidad de stock debe ser un número positivo");
+        }
+
+        Optional<Product> optionalProduct = productService.findById(id);
+        if (optionalProduct.isPresent()) {
+            Product existingProduct = optionalProduct.get();
+            Double currentStock = existingProduct.getStock();
+            existingProduct.setStock(currentStock + stock);
+            productService.save(existingProduct);
+            return ResponseEntity.ok().body("Cantidad agregada");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No se encontró ningún producto con el ID proporcionado: " + id);
+        }
+    }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id) {
         Optional<Product> optionalProduct = productService.findById(id);
