@@ -3,6 +3,7 @@ package com.chiton.api.controller;
 import com.chiton.api.dto.ReferenceDTO;
 import com.chiton.api.dto.ReferenceDetailDTO;
 import com.chiton.api.entity.*;
+import com.chiton.api.service.FileStorageService;
 import com.chiton.api.service.ProductService;
 import com.chiton.api.service.ReferenceService;
 import jakarta.transaction.Transactional;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Ref;
 import java.util.*;
@@ -26,6 +28,9 @@ public class ReferenceController {
 
     @Autowired
     private ConvertDTO convertDTO;
+
+    @Autowired
+    private FileStorageService fileStorageService;
 
     @GetMapping()
     public ResponseEntity<?> findAll(){
@@ -93,7 +98,6 @@ public class ReferenceController {
                 .status(HttpStatus.CREATED)
                 .body(convertDTO.convertToReferenceDTO(savedReference));
     }
-
 
     @Transactional
     @PutMapping("/{id}")
@@ -175,6 +179,32 @@ public class ReferenceController {
         }
         return null;
     }
+
+    @Transactional
+    @PostMapping("/upload-image/{id}")
+    public ResponseEntity<?> uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+        try {
+            // Obtener la referencia utilizando su ID
+            Optional<Reference> optionalReference = referenceService.findById(id);
+            if (optionalReference.isPresent()) {
+                Reference reference = optionalReference.get();
+                // Guardar la imagen y obtener su URL
+                String imageUrl = fileStorageService.storeFile(id, file);
+                // Asociar la URL de la imagen con la referencia
+                reference.setImage(imageUrl);
+                // Guardar la referencia actualizada
+                referenceService.save(reference);
+                return ResponseEntity.ok("Exito al subir imagen. URL: " + imageUrl);
+            } else {
+                // Manejar el caso de que la referencia no exista
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reference no encontrada con ID: " + id);
+            }
+        } catch (Exception e) {
+            // Manejo de errores
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fallo al subir y relacionar la referencia");
+        }
+    }
+
 
     @PostMapping("/status/{id}")
     public ResponseEntity<?> toggleStatus(@PathVariable Long id) {

@@ -22,7 +22,6 @@ public class Reference {
     @NotNull
     private String description;
 
-    @NotNull
     private String image;
 
     @NotNull

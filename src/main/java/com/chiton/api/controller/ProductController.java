@@ -156,8 +156,8 @@ public class ProductController {
             // Verificar si hay detalles de referencia o compra relacionados con este producto
             if (!referenceDetailIds.isEmpty() || !purchaseDetailIds.isEmpty()) {
                 Map<String, List<Long>> relatedDetails = new HashMap<>();
-                relatedDetails.put("ID de Referencias asociadas", referenceDetailIds);
-                relatedDetails.put("ID de Ordenes de Compra asociadas", purchaseDetailIds);
+                relatedDetails.put("References", referenceDetailIds);
+                relatedDetails.put("Purchases", purchaseDetailIds);
                 return ResponseEntity.badRequest().body(relatedDetails);
             }
 
