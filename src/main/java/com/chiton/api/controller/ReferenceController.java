@@ -117,7 +117,7 @@ public class ReferenceController {
         // Actualizar la referencia con los nuevos datos
         existingReference.setDescription(updatedReferenceDTO.getDescription());
         existingReference.setImage(updatedReferenceDTO.getImage());
-        existingReference.setStatus(updatedReferenceDTO.getStatus());
+        existingReference.setStatus("Activado");
 
         // Mapa para realizar un seguimiento de los detalles del JSON por producto
         Map<String, ReferenceDetailDTO> productDetailsMap = new HashMap<>();
