@@ -112,25 +112,15 @@ public class TranslateOrderController {
 
         if(optionalTranslateOrder.isPresent()){
             TranslateOrder existingTranslateOrder = optionalTranslateOrder.get();
-            Long translateId = existingTranslateOrder.getId();
             if (existingTranslateOrder.getStatus().equals("Completo")){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esta traslado ya fue completado");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esta Traslado ya fue completado");
             } else {
-                Optional<ProductionOrder> productionOrder = productionOrderService.findById(translateId);
-                if(productionOrder.isPresent()){
-                    ProductionOrder prod = productionOrder.get();
-                    prod.setStatus("Completo");
-                    existingTranslateOrder.setStatus("Completo");
-                    productionOrderService.save(prod);
-                    translateOrderService.save(existingTranslateOrder);
-                    return ResponseEntity.status(HttpStatus.OK).body("Orden Traslado y Orden de Produccion Asociada completas");
-                }
-                else{
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Orden de Produccion no encontrada");
-                }
+                existingTranslateOrder.setStatus("Completo");
+                translateOrderService.save(existingTranslateOrder);
+                return ResponseEntity.ok().body("Orden de Traslado completa.");
             }
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Orden de compra no encontrada no encontrado");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Orden de Traslado no encontrada no encontrado");
         }
     }
 

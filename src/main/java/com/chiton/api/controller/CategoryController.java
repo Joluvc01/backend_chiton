@@ -100,7 +100,6 @@ public class CategoryController {
 
         if (optionalCategory.isPresent()) {
             Category category = optionalCategory.get();
-            // Verificar si existen productos asociados a la categoría
             List<Product> productList = productService.findByCategoryName(category.getName());
             if (!productList.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No se puede eliminar la categoría porque tiene " + productList.size() + " productos asociados.");

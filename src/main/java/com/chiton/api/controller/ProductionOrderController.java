@@ -196,6 +196,24 @@ public class ProductionOrderController {
         return null;
     }
 
+    @PostMapping("/status/{id}")
+    public ResponseEntity<?> toggleStatus(@PathVariable Long id){
+        Optional<ProductionOrder> optionalProductionOrder = productionOrderService.findById(id);
+
+        if(optionalProductionOrder.isPresent()){
+            ProductionOrder productionOrder = optionalProductionOrder.get();
+            if (productionOrder.getStatus().equals("Completo")){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esta Orden de Produccion ya fue completada");
+            } else {
+                productionOrder.setStatus("Completo");
+                productionOrderService.save(productionOrder);
+                return ResponseEntity.ok().body("Orden de Produccion completa.");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Orden de Produccion no encontrada no encontrado");
+        }
+    }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id){

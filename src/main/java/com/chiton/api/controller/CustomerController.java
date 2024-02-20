@@ -1,6 +1,7 @@
 package com.chiton.api.controller;
 
 import com.chiton.api.dto.CustomerDTO;
+import com.chiton.api.entity.Category;
 import com.chiton.api.entity.Customer;
 import com.chiton.api.entity.ProductionOrder;
 import com.chiton.api.service.CustomerService;
@@ -109,7 +110,7 @@ public class CustomerController {
             //Verificar si hay ordenes de produccion realcionados a este cliente
             if (!prodOrderIds.isEmpty()){
                 Map<String, List<Long>> relatedProd = new HashMap<>();
-                relatedProd.put("ID de Ordenes de Produccion asociadas:", prodOrderIds);
+                relatedProd.put("OP", prodOrderIds);
                 return ResponseEntity.badRequest().body(relatedProd);
             }
 
@@ -120,5 +121,12 @@ public class CustomerController {
         else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente no encontrada");
         }
+    }
+
+    @GetMapping("/exist/{name}")
+    public ResponseEntity<Boolean> checkCustomerExists(@PathVariable String name) {
+        Customer cust = customerService.findByName(name);
+        boolean exists = cust != null;
+        return ResponseEntity.ok(exists);
     }
 }

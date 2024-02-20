@@ -3,8 +3,10 @@ package com.chiton.api.controller;
 import com.chiton.api.dto.RegisterDTO;
 import com.chiton.api.dto.UserDTO;
 import com.chiton.api.entity.Category;
+import com.chiton.api.entity.Customer;
 import com.chiton.api.entity.Role;
 import com.chiton.api.entity.User;
+import com.chiton.api.service.ReferenceService;
 import com.chiton.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -65,16 +67,15 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody RegisterDTO registerDTO) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UserDTO userDTO) {
         Optional<User> optionalUser = userService.findById(id);
 
         if (optionalUser.isPresent()) {
             User existingUser = optionalUser.get();
-            existingUser.setUsername(registerDTO.getUsername());
-            existingUser.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
-            existingUser.setFirstname(registerDTO.getFirstname());
-            existingUser.setLastname(registerDTO.getLastname());
-            existingUser.setRole(Role.valueOf(registerDTO.getRole()));
+            existingUser.setUsername(userDTO.getUsername());
+            existingUser.setFirstname(userDTO.getFirstname());
+            existingUser.setLastname(userDTO.getLastname());
+            existingUser.setRole(Role.valueOf(userDTO.getRole()));
 
             User updatedUser = userService.save(existingUser);
             return ResponseEntity.ok(convertDTO.convertToUserDTO(updatedUser));
@@ -114,6 +115,33 @@ public class UserController {
         }
         else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrada");
+        }
+    }
+
+    @GetMapping("/exist/{username}")
+    public ResponseEntity<Boolean> checkUserExists(@PathVariable String username) {
+        Optional<User> user = userService.findByUsername(username);
+        boolean exists = user.isPresent();
+        return ResponseEntity.ok(exists);
+    }
+
+    @PostMapping("/change-password/{id}")
+    public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody String newPassword) {
+        Optional<User> optionalUser = userService.findById(id);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            if (passwordEncoder.matches(newPassword, user.getPassword())) {
+                return ResponseEntity.badRequest().body("La nueva contraseña no puede ser igual a la contraseña actual");
+            }
+
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userService.save(user);
+
+            return ResponseEntity.ok("Contraseña cambiada exitosamente");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
         }
     }
 }

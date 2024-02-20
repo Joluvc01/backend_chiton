@@ -233,6 +233,16 @@ public class ReferenceController {
 
         if(optionalReference.isPresent()){
             Reference reference = optionalReference.get();
+            List<Long> prodsDetailsIds = reference.getProductionDetails().stream()
+                    .map(referenceDetail -> referenceDetail.getProductionOrder().getId())
+                    .toList();
+
+            // Verificar si hay detalles de referencia o compra relacionados con este producto
+            if (!prodsDetailsIds.isEmpty()) {
+                Map<String, List<Long>> relatedDetails = new HashMap<>();
+                relatedDetails.put("OP", prodsDetailsIds);
+                return ResponseEntity.badRequest().body(relatedDetails);
+            }
             reference.getDetails().clear();
             referenceService.deleteById(id);
             return ResponseEntity.ok("Referencia eliminada");

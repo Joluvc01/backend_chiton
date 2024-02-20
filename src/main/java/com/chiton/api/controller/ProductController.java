@@ -47,6 +47,12 @@ public class ProductController {
 
         if (existingProduct != null) {
             existingProduct.setStock(existingProduct.getStock() + productDTO.getStock());
+            Category category = categoryService.findByName(productDTO.getCategory());
+
+            if (category == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La categoría no existe");
+            }
+            existingProduct.setCategory(category);
             Product updatedProduct = productService.save(existingProduct);
             ProductDTO updatedProductDTO = convertDTO.convertToProductDTO(updatedProduct);
             return ResponseEntity.ok(updatedProductDTO);
