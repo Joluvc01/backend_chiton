@@ -104,7 +104,6 @@ public class UserController {
         }
     }
 
-
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id){
         Optional<User> optionalUser = userService.findById(id);
