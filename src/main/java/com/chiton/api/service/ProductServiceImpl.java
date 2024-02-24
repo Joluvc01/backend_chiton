@@ -22,11 +22,6 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public Product findByNameAndColor(String name, String color) {
-        return productRepository.findByNameAndColor(name, color);
-    }
-
-    @Override
     public Product findByName(String name) {
         return productRepository.findByName(name);
     }

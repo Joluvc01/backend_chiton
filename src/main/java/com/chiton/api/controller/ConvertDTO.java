@@ -41,7 +41,6 @@ public class ConvertDTO {
         return new ProductDTO(
                 product.getId(),
                 product.getName(),
-                product.getColor(),
                 product.getStock(),
                 product.getStatus(),
                 category

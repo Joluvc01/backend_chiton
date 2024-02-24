@@ -26,9 +26,6 @@ public class Product {
     private String name;
 
     @NotNull
-    private String color;
-
-    @NotNull
     private Double stock;
 
     @NotNull

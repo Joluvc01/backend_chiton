@@ -43,7 +43,7 @@ public class ProductController {
 
     @PostMapping()
     public ResponseEntity<?> create(@RequestBody ProductDTO productDTO) {
-        Product existingProduct = productService.findByNameAndColor(productDTO.getName(), productDTO.getColor());
+        Product existingProduct = productService.findByName(productDTO.getName());
 
         if (existingProduct != null) {
             existingProduct.setStock(existingProduct.getStock() + productDTO.getStock());
@@ -59,7 +59,6 @@ public class ProductController {
         } else {
             Product newProduct = new Product();
             newProduct.setName(productDTO.getName());
-            newProduct.setColor(productDTO.getColor());
             newProduct.setStock(productDTO.getStock());
             newProduct.setStatus("Activado");
 
@@ -84,7 +83,6 @@ public class ProductController {
             Product existingProduct = optionalProduct.get();
 
             existingProduct.setName(productDTO.getName());
-            existingProduct.setColor(productDTO.getColor());
             existingProduct.setStock(productDTO.getStock());
 
             Category category = categoryService.findByName(productDTO.getCategory());

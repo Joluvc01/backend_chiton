@@ -12,7 +12,6 @@ public class ProductDTO implements Serializable{
 
     final Long id;
     final String name;
-    final String color;
     final Double stock;
     final String status;
     final String category;
