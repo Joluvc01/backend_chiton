@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 
 @Service
@@ -24,11 +23,9 @@ public class AuthService {
 
     public ReqRes signIn(ReqRes singInRequest){
         ReqRes response = new ReqRes();
-
         try {
             authenticationManager.authenticate((new UsernamePasswordAuthenticationToken(singInRequest.getUsername(), singInRequest.getPassword())));
             var user = userRepository.findByUsername(singInRequest.getUsername()).orElseThrow();
-            System.out.println("El usuario es :"+ user);
             var jwt = jwtUtils.generateToken(user, user);
             var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
             response.setStatusCode(200);
@@ -37,7 +34,7 @@ public class AuthService {
             response.setExpirationTime("4hr");
             response.setMessage("Exito al ingresar");
         } catch (Exception e){
-            response.setStatusCode(500);
+            response.setStatusCode(401);
             response.setError(e.getMessage());
         }
         return response;
@@ -45,17 +42,20 @@ public class AuthService {
 
     public ReqRes refreshToken(ReqRes refreshTokenRegiest){
         ReqRes response = new ReqRes();
-        String username = jwtUtils.extractUsername(refreshTokenRegiest.getToken());
-        User user = userRepository.findByUsername(username).orElseThrow();
-        if (jwtUtils.isTokenValid(refreshTokenRegiest.getToken(), user)){
-            var jwt = jwtUtils.generateToken(user, user);
-            response.setStatusCode(200);
-            response.setToken(jwt);
-            response.setRefreshToken(refreshTokenRegiest.getToken());
-            response.setExpirationTime("8hr");
-            response.setMessage("Exito al refrescar el token");
-        }else {
-            response.setStatusCode(500);
+        try {
+            String username = jwtUtils.extractUsername(refreshTokenRegiest.getToken());
+            User user = userRepository.findByUsername(username).orElseThrow();
+            if (jwtUtils.isTokenValid(refreshTokenRegiest.getToken(), user)){
+                var jwt = jwtUtils.generateToken(user, user);
+                response.setStatusCode(200);
+                response.setToken(jwt);
+                response.setRefreshToken(refreshTokenRegiest.getToken());
+                response.setExpirationTime("8hr");
+                response.setMessage("Exito al refrescar el token");
+            }
+        } catch (Exception e){
+            response.setStatusCode(401);
+            response.setMessage(e.getMessage());
         }
         return response;
     }

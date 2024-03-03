@@ -20,7 +20,7 @@ import java.util.function.Function;
 public class JWTUtils {
 
     private SecretKey Key;
-    private static final long EXPIRATION_TIME_TOKEN =  14400000;// 4 horas
+    private static final long EXPIRATION_TIME_TOKEN = 10; //14400000;// 4 horas
     private static final long EXPIRATION_TIME_REFRESH =  28800000;// 8 horas
 
 
