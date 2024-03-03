@@ -1,10 +1,9 @@
 package com.chiton.api.controller;
 
 import com.chiton.api.dto.TranslateOrderDTO;
-import com.chiton.api.entity.Product;
 import com.chiton.api.entity.ProductionOrder;
-import com.chiton.api.entity.PurchaseDetail;
 import com.chiton.api.entity.TranslateOrder;
+import com.chiton.api.service.ConvertDTO;
 import com.chiton.api.service.ProductionOrderService;
 import com.chiton.api.service.TranslateOrderService;
 import jakarta.transaction.Transactional;

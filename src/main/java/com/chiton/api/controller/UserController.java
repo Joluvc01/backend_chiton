@@ -2,11 +2,9 @@ package com.chiton.api.controller;
 
 import com.chiton.api.dto.RegisterDTO;
 import com.chiton.api.dto.UserDTO;
-import com.chiton.api.entity.Category;
-import com.chiton.api.entity.Customer;
 import com.chiton.api.entity.Role;
 import com.chiton.api.entity.User;
-import com.chiton.api.service.ReferenceService;
+import com.chiton.api.service.ConvertDTO;
 import com.chiton.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

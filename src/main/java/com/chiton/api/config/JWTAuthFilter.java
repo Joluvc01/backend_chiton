@@ -33,17 +33,16 @@ public class JWTAuthFilter extends OncePerRequestFilter {
         final String jwtToken;
         final String username;
         if (authHeader == null || authHeader.isBlank()) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Invalid Token");
+            filterChain.doFilter(request, response);
             return;
         }
         try {
             jwtToken = authHeader.substring(7);
-            username =  jwtUtils.extractUsername(jwtToken);
-            if (username != null && SecurityContextHolder.getContext().getAuthentication()==null) {
+            username = jwtUtils.extractUsername(jwtToken);
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userService.loadUserByUsername(username);
 
-                if (jwtUtils.isTokenValid(jwtToken, userDetails)){
+                if (jwtUtils.isTokenValid(jwtToken, userDetails)) {
                     SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
                     UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities()
@@ -53,7 +52,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
                     SecurityContextHolder.setContext(securityContext);
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write(e.getMessage());
             return;

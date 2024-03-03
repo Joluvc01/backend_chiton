@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authRequest ->
                         authRequest
                                 .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers(AUTH_WHITELIST).permitAll()
                                 .requestMatchers("/categories/**").hasAnyAuthority("ALMACEN","GERENCIA")
                                 .requestMatchers("/products/**").hasAnyAuthority("ALMACEN","GERENCIA","PRODUCCION","DISENIO")
                                 .requestMatchers("/users/**").hasAuthority("GERENCIA")
@@ -49,6 +50,14 @@ public class SecurityConfig {
                 );
         return httpSecurity.build();
     }
+
+    private static final String[] AUTH_WHITELIST = {
+            "/api/v1/auth/**",
+            "/v3/api-docs/**",
+            "/v3/api-docs.yaml",
+            "/swagger-ui/**",
+            "/swagger-ui.html"
+    };
 
     @Bean
     public AuthenticationProvider authenticationProvider(){

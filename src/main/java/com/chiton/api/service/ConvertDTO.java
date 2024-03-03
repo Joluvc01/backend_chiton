@@ -1,4 +1,4 @@
-package com.chiton.api.controller;
+package com.chiton.api.service;
 
 import com.chiton.api.dto.*;
 import com.chiton.api.entity.*;

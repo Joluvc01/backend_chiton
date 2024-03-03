@@ -3,6 +3,7 @@ package com.chiton.api.controller;
 import com.chiton.api.dto.ReferenceDTO;
 import com.chiton.api.dto.ReferenceDetailDTO;
 import com.chiton.api.entity.*;
+import com.chiton.api.service.ConvertDTO;
 import com.chiton.api.service.FileStorageService;
 import com.chiton.api.service.ProductService;
 import com.chiton.api.service.ReferenceService;
@@ -13,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.sql.Ref;
 import java.util.*;
 
 @RestController
