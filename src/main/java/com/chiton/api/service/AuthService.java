@@ -50,7 +50,7 @@ public class AuthService {
                 response.setStatusCode(200);
                 response.setToken(jwt);
                 response.setRefreshToken(refreshTokenRegiest.getToken());
-                response.setExpirationTime("8hr");
+                response.setExpirationTime("4hr");
                 response.setMessage("Exito al refrescar el token");
             }
         } catch (Exception e){

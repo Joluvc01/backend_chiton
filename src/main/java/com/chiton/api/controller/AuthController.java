@@ -18,11 +18,21 @@ public class AuthController {
 
     @PostMapping("")
     public ResponseEntity<?> login(@RequestBody ReqRes reqRes){
-        return ResponseEntity.ok(authService.signIn(reqRes));
+        ReqRes response = authService.signIn(reqRes);
+        if(response.getStatusCode()==200){
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(response.getStatusCode()).body(response);
+        }
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(@RequestBody ReqRes refreshTokenRequest){
-        return ResponseEntity.ok(authService.refreshToken(refreshTokenRequest));
+        ReqRes response = authService.refreshToken(refreshTokenRequest);
+        if(response.getStatusCode()==200){
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(response.getStatusCode()).body(response);
+        }
     }
 }

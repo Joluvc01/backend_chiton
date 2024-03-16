@@ -1,6 +1,5 @@
 package com.chiton.api.service;
 
-import com.chiton.api.entity.Role;
 import com.chiton.api.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -37,9 +36,9 @@ public class JWTUtils {
 
         return Jwts.builder()
                 .subject((userDetails.getUsername()))
-                .claim("role:", role)
-                .claim("firstname:", firstname)
-                .claim("lastname:", lastname)
+                .claim("role", role)
+                .claim("firstname", firstname)
+                .claim("lastname", lastname)
                 .issuedAt(new Date((System.currentTimeMillis())))
                 .expiration(new Date(System.currentTimeMillis()+EXPIRATION_TIME_TOKEN))
                 .signWith(Key)
