@@ -19,9 +19,7 @@ import java.util.function.Function;
 public class JWTUtils {
 
     private SecretKey Key;
-    private static final long EXPIRATION_TIME_TOKEN = 10; //14400000;// 4 horas
-    private static final long EXPIRATION_TIME_REFRESH =  28800000;// 8 horas
-
+    private static final long EXPIRATION_TIME_TOKEN = 43200000;// 12 horas
 
     public JWTUtils(){
         String secreteString = "586E3272357538782F413F4428472B4B6250655368566B597033733676397924";
@@ -41,16 +39,6 @@ public class JWTUtils {
                 .claim("lastname", lastname)
                 .issuedAt(new Date((System.currentTimeMillis())))
                 .expiration(new Date(System.currentTimeMillis()+EXPIRATION_TIME_TOKEN))
-                .signWith(Key)
-                .compact();
-    }
-
-    public String generateRefreshToken(HashMap<String, Object> claims, UserDetails userDetails){
-        return Jwts.builder()
-                .claims(claims)
-                .subject((userDetails.getUsername()))
-                .issuedAt(new Date((System.currentTimeMillis())))
-                .expiration(new Date(System.currentTimeMillis()+ EXPIRATION_TIME_REFRESH))
                 .signWith(Key)
                 .compact();
     }

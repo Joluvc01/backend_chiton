@@ -25,14 +25,4 @@ public class AuthController {
             return ResponseEntity.status(response.getStatusCode()).body(response);
         }
     }
-
-    @PostMapping("/refresh")
-    public ResponseEntity<?> refreshToken(@RequestBody ReqRes refreshTokenRequest){
-        ReqRes response = authService.refreshToken(refreshTokenRequest);
-        if(response.getStatusCode()==200){
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.status(response.getStatusCode()).body(response);
-        }
-    }
 }
