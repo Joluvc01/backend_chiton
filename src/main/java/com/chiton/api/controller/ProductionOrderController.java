@@ -22,9 +22,6 @@ public class ProductionOrderController {
     private ProductionOrderService productionOrderService;
 
     @Autowired
-    private TranslateOrderService translateOrderService;
-
-    @Autowired
     private CustomerService customerService;
 
     @Autowired
@@ -213,21 +210,21 @@ public class ProductionOrderController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteById(@PathVariable Long id){
+    public ResponseEntity<?> deleteById(@PathVariable Long id) {
         Optional<ProductionOrder> optionalProductionOrder = productionOrderService.findById(id);
 
-        if(optionalProductionOrder.isPresent()){
+        if (optionalProductionOrder.isPresent()) {
             ProductionOrder productionOrder = optionalProductionOrder.get();
-
             productionOrder.getDetails().clear();
-            Long traslateId = productionOrder.getTranslateOrder().getId();
-            productionOrder.setTranslateOrder(null);
-            translateOrderService.deleteById(traslateId);
-            productionOrderService.deleteById(id);
-            return ResponseEntity.ok("Orden de produccion eliminada");
-        }
-        else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Orden de produccion no encontrado");
+            TranslateOrder translateOrder = productionOrder.getTranslateOrder();
+            if (translateOrder == null) {
+                productionOrderService.deleteById(id);
+                return ResponseEntity.ok("Orden de producción eliminada");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(translateOrder.getId());
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Orden de producción no encontrada");
         }
     }
 }

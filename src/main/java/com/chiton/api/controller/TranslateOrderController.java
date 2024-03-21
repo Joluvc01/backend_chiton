@@ -68,6 +68,8 @@ public class TranslateOrderController {
         translateOrder.setGenerationDate(gendate);
         translateOrder.setStatus("Incompleto");
         translateOrder = translateOrderService.save(translateOrder);
+        existingprodOrder.setTranslateOrder(translateOrder);
+        productionOrderService.save(existingprodOrder);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -101,6 +103,8 @@ public class TranslateOrderController {
 
         translateOrder.setProductionOrder(existingprodOrder);
         translateOrder = translateOrderService.save(translateOrder);
+        existingprodOrder.setTranslateOrder(translateOrder);
+        productionOrderService.save(existingprodOrder);
 
         return ResponseEntity.ok(convertDTO.convertToTranslateOrderDTO(translateOrder));
     }
@@ -129,8 +133,11 @@ public class TranslateOrderController {
 
         if(optionalTranslateOrder.isPresent()){
             TranslateOrder translateOrder = optionalTranslateOrder.get();
+            ProductionOrder productionOrder = translateOrder.getProductionOrder();
+
+            productionOrder.setTranslateOrder(null);
             translateOrder.setProductionOrder(null);
-            translateOrderService.save(translateOrder);
+            productionOrderService.save(productionOrder);
             translateOrderService.deleteById(id);
             return ResponseEntity.ok("Orden de traslado eliminado");
         }
