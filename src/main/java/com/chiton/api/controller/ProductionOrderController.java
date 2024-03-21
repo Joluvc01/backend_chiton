@@ -191,21 +191,54 @@ public class ProductionOrderController {
     }
 
     @PostMapping("/status/{id}")
-    public ResponseEntity<?> toggleStatus(@PathVariable Long id){
+    public ResponseEntity<?> toggleStatus(@PathVariable Long id) {
         Optional<ProductionOrder> optionalProductionOrder = productionOrderService.findById(id);
 
-        if(optionalProductionOrder.isPresent()){
+        if (optionalProductionOrder.isPresent()) {
             ProductionOrder productionOrder = optionalProductionOrder.get();
-            if (productionOrder.getStatus().equals("Completo")){
+            if (productionOrder.getStatus().equals("Completo")) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esta Orden de Produccion ya fue completada");
             } else {
-                productionOrder.setStatus("Completo");
-                productionOrderService.save(productionOrder);
-                return ResponseEntity.ok().body("Orden de Produccion completa.");
+                Map<Product, Double> productRequirements = calculateProductRequirements(productionOrder);
+                if (productRequirements.isEmpty()) {
+                    // Marcar la orden de producción como completa si no hay productos con stock insuficiente
+                    productionOrder.setStatus("Completo");
+                    productionOrderService.save(productionOrder);
+                    return ResponseEntity.ok().body("Orden de Produccion completa.");
+                } else {
+                    // Construir mensaje indicando los productos con stock insuficiente y la cantidad faltante
+                    StringBuilder message = new StringBuilder("Stock insuficiente para los siguientes productos:");
+                    for (Map.Entry<Product, Double> entry : productRequirements.entrySet()) {
+                        Product product = entry.getKey();
+                        Double quantityNeeded = entry.getValue();
+                        double stockShortage = quantityNeeded - product.getStock();
+                        message.append(product.getName()).append(" = ").append(stockShortage).append(" unidades");
+                    }
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message.toString());
+                }
             }
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Orden de Produccion no encontrada no encontrado");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Orden de Produccion no encontrada");
         }
+    }
+
+    private Map<Product, Double> calculateProductRequirements(ProductionOrder productionOrder) {
+        Map<Product, Double> productRequirements = new HashMap<>();
+        for (ProductionDetail productionDetail : productionOrder.getDetails()) {
+            Reference reference = productionDetail.getReference();
+            for (ReferenceDetail referenceDetail : reference.getDetails()) {
+                Product product = referenceDetail.getProduct();
+                double quantityNeeded = referenceDetail.getQuantity() * productionDetail.getQuantity();
+                if (product.getStock() < quantityNeeded) {
+                    productRequirements.put(product, quantityNeeded);
+                } else {
+                    // Restar del stock actual si el stock es mayor o igual a la cantidad requerida de los productos
+                    double newStock = product.getStock() - quantityNeeded;
+                    product.setStock(newStock);
+                }
+            }
+        }
+        return productRequirements;
     }
 
 
