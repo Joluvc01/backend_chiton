@@ -124,6 +124,7 @@ public class ConvertDTO {
 
     public ProductionOrderDTO convertToProductionOrderDTO(ProductionOrder productionOrder){
         String customer = (productionOrder.getCustomer() != null) ? productionOrder.getCustomer().getName() : null;
+        Long translate = (productionOrder.getTranslateOrder() != null) ? productionOrder.getTranslateOrder().getId() : null;
         List<ProductionDetailDTO> details = productionOrder.getDetails() != null
                 ? productionOrder.getDetails().stream().map(this::convertToProductionDetailDTO).toList()
                 : null;
@@ -133,8 +134,10 @@ public class ConvertDTO {
                 customer,
                 productionOrder.getGenerationDate(),
                 productionOrder.getDeadline(),
+                productionOrder.getCompletedDate(),
                 productionOrder.getStatus(),
-                details
+                details,
+                translate
         );
     }
 

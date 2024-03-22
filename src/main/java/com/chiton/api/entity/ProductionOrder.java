@@ -27,6 +27,9 @@ public class ProductionOrder {
     @Column(name = "generationDate", nullable = false, updatable = false)
     private LocalDate generationDate;
 
+    @Column( name = "completedDate")
+    private LocalDate completedDate;
+
     @Column(name = "deadline", nullable = false)
     private LocalDate deadline;
 

@@ -32,6 +32,7 @@ public class ProductionOrderController {
 
     @GetMapping()
     public ResponseEntity<?> findAll(){
+        checkAndUpdateDelayedOrders();
         List<ProductionOrder> productionOrders = productionOrderService.findAll();
         List<ProductionOrderDTO> productionOrderDTOS = productionOrders.stream()
                 .map(convertDTO::convertToProductionOrderDTO)
@@ -41,10 +42,24 @@ public class ProductionOrderController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id){
+        checkAndUpdateDelayedOrders();
         return productionOrderService.findById(id)
                 .map(prod -> ResponseEntity.ok(convertDTO.convertToProductionOrderDTO(prod)))
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    private void checkAndUpdateDelayedOrders(){
+        List<ProductionOrder> productionOrders = productionOrderService.findAll();
+        LocalDate currentDate = LocalDate.now();
+
+        for (ProductionOrder order : productionOrders) {
+            if (order.getStatus().equals("Incompleto") && currentDate.isAfter(order.getDeadline())) {
+                order.setStatus("Retrasado");
+                productionOrderService.save(order);
+            }
+        }
+    }
+
 
     @Transactional
     @PostMapping()
@@ -201,12 +216,13 @@ public class ProductionOrderController {
             } else {
                 Map<Product, Double> productRequirements = calculateProductRequirements(productionOrder);
                 if (productRequirements.isEmpty()) {
-                    // Marcar la orden de producción como completa si no hay productos con stock insuficiente
                     productionOrder.setStatus("Completo");
+                    LocalDate compdate = LocalDate.now(ZoneId.of("America/Lima"));
+                    productionOrder.setCompletedDate(compdate);
+                    System.out.println(compdate);
                     productionOrderService.save(productionOrder);
                     return ResponseEntity.ok().body("Orden de Produccion completa.");
                 } else {
-                    // Construir mensaje indicando los productos con stock insuficiente y la cantidad faltante
                     StringBuilder message = new StringBuilder("Stock insuficiente para los siguientes productos:");
                     for (Map.Entry<Product, Double> entry : productRequirements.entrySet()) {
                         Product product = entry.getKey();

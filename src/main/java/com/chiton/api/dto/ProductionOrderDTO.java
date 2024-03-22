@@ -1,5 +1,6 @@
 package com.chiton.api.dto;
 
+import com.chiton.api.entity.TranslateOrder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +17,8 @@ public class ProductionOrderDTO implements Serializable {
     final String customer;
     final LocalDate generationDate;
     final LocalDate deadline;
+    final LocalDate completedDate;
     final String status;
     final List<ProductionDetailDTO> details;
+    final Long translateOrder;
 }

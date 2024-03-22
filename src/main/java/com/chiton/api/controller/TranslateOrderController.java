@@ -49,6 +49,7 @@ public class TranslateOrderController {
     @Transactional
     @PostMapping()
     public ResponseEntity<?> create(@RequestBody TranslateOrderDTO translateOrderDTO){
+
         //Crear nueva orden de traslado
         TranslateOrder translateOrder = new TranslateOrder();
 
@@ -63,6 +64,11 @@ public class TranslateOrderController {
         //Obtener la orden de compra del Optional
         ProductionOrder existingprodOrder = optionalProductionOrder.get();
 
+        // Verificar si la orden de producción ya está asociada a un traslado
+        if(existingprodOrder.getTranslateOrder() != null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("La orden de Produccion ya está asociada a un traslado");
+        }
+
         translateOrder.setProductionOrder(existingprodOrder);
         LocalDate gendate = LocalDate.now(ZoneId.of("America/Lima"));
         translateOrder.setGenerationDate(gendate);
@@ -76,38 +82,6 @@ public class TranslateOrderController {
                 .body(convertDTO.convertToTranslateOrderDTO(translateOrder));
     }
 
-    @Transactional
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id,@RequestBody TranslateOrderDTO updatedTranslateOrderDTO){
-
-        //Buscar la orden de traslado
-        Optional<TranslateOrder> optionalTranslateOrder = translateOrderService.findById(id);
-
-        //Verifcar si la referencia Existe
-        if(optionalTranslateOrder.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La orden de Traslado no existe");
-        }
-
-        //Obtener la ordend de traslado del optional
-        TranslateOrder translateOrder = optionalTranslateOrder.get();
-
-        //Buscar la orden de Produccion existente
-        Optional<ProductionOrder> optionalProductionOrder = productionOrderService.findById(updatedTranslateOrderDTO.getProductionOrder());
-
-        //Verificar si exise la orden de Produccion
-        if(optionalProductionOrder.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La orden de Produccion no existe");
-        }
-        //Obtener la orden de compra del Optional
-        ProductionOrder existingprodOrder = optionalProductionOrder.get();
-
-        translateOrder.setProductionOrder(existingprodOrder);
-        translateOrder = translateOrderService.save(translateOrder);
-        existingprodOrder.setTranslateOrder(translateOrder);
-        productionOrderService.save(existingprodOrder);
-
-        return ResponseEntity.ok(convertDTO.convertToTranslateOrderDTO(translateOrder));
-    }
 
     @PostMapping("/status/{id}")
     public ResponseEntity<?> toggleStatus(@PathVariable Long id){
